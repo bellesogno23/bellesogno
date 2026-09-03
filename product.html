@@ -155,7 +155,7 @@
     document.title = p.name + ' — Bellesogno';
 
     const imgClass = p.category === 'Perfume' ? 'product-image perfume' : 'product-image';
-    const media = p.images ? `<img src="${p.images}" alt="${p.name}" />` : '';
+    const media = p.images ? `<img src="${p.images}" alt="${p.name}" onerror="this.style.display='none'" />` : '';
     const hasVariants = p.variants && p.variants.length > 0;
 
     container.innerHTML = `
