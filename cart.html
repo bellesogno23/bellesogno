@@ -384,7 +384,7 @@
           ${productsToShow.length > 0 ? `
             <div class="empty-cart-products">
               ${productsToShow.map(p => `
-                <div class="mini-card reveal" data-id="${p.productID}">
+                <div class="mini-card" data-id="${p.productID}">
                   <div class="mini-swatch ${p.category === 'Perfume' ? 'perfume' : ''}"></div>
                   <div class="mini-name">${p.name}</div>
                   <div class="mini-price">${formatPrice(p.basePrice)}</div>
@@ -458,7 +458,7 @@
             <h3>You might also like</h3>
             <div class="cross-sell-grid">
               ${crossSellProducts.map(p => `
-                <div class="cross-sell-card reveal" data-id="${p.productID}">
+                <div class="cross-sell-card" data-id="${p.productID}">
                   <div class="cross-sell-swatch ${p.category === 'Perfume' ? 'perfume' : ''}"></div>
                   <div class="cross-sell-name">${p.name}</div>
                   <div class="cross-sell-price">${formatPrice(p.basePrice)}</div>
