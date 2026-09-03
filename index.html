@@ -199,10 +199,13 @@
 
 <script>
   // ════════════════════════════════════════════════════════════════════════
-  // CONFIG — hardcoded defaults matching the Config sheet right now.
-  // Once the Apps Script backend is wired up, these get overridden live
-  // by whatever's actually in the Sheet — same pattern as GLASSHOUSE.
+  // APPS SCRIPT URL — paste your deployment URL here once it's live.
+  // (Extensions → Apps Script → Deploy → New deployment → Web app)
   // ════════════════════════════════════════════════════════════════════════
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz0tnGbw7SW0b6qcnqTrvNZ0-7iH054sV29gbAEWbtTfsnKoNDZefU0I29OCvQYkOP4/exec';
+
+  // Hardcoded fallback — used only if the live fetch fails (e.g. offline,
+  // or the URL above hasn't been set yet), so the page never shows blank.
   const EVENT_CONFIG = {
     brandName: 'bellesogno',
     heroTagline: 'Cinematic pieces for people who notice detail.',
@@ -214,25 +217,9 @@
     footerText: '© 2026 Bellesogno. All rights reserved.'
   };
 
-  // ════════════════════════════════════════════════════════════════════════
-  // PRODUCTS — hardcoded for now, matching the Products + Variants sheets.
-  // Once Apps Script is wired up, this comes from a live fetch instead.
-  // ════════════════════════════════════════════════════════════════════════
-  const PRODUCTS = [
-    {
-      productID: 'P001',
-      name: 'Test Jacket',
-      category: 'Clothing',
-      basePrice: 1000,
-      image: null // swap in 'jacket1.jpg' once the real photo is ready
-    },
-    {
-      productID: 'P002',
-      name: 'Midnight Bloom',
-      category: 'Perfume',
-      basePrice: 1500,
-      image: null // swap in 'perfume1.jpg' once the real photo is ready
-    }
+  let PRODUCTS = [
+    { productID: 'P001', name: 'Test Jacket', category: 'Clothing', basePrice: 1000, images: null },
+    { productID: 'P002', name: 'Midnight Bloom', category: 'Perfume', basePrice: 1500, images: null }
   ];
 
   function applyConfig() {
@@ -254,8 +241,8 @@
     const grid = document.getElementById('productGrid');
     grid.innerHTML = PRODUCTS.map(p => {
       const swatchClass = p.category === 'Perfume' ? 'product-swatch perfume' : 'product-swatch';
-      const media = p.image
-        ? `<img src="${p.image}" alt="${p.name}" />`
+      const media = p.images
+        ? `<img src="${p.images}" alt="${p.name}" />`
         : '';
       return `
         <div class="product-card">
@@ -270,8 +257,58 @@
     }).join('');
   }
 
+  // ── Fetch config live from the Sheet — fetch() first (works if Apps
+  // Script's CORS headers allow it), JSONP as the fallback (always works,
+  // since it loads via a <script> tag rather than a cross-origin fetch). ──
+  function applyConfigData(data) {
+    if (!data || data.status !== 'ok') {
+      console.warn('[Config] Bad response, using hardcoded fallback:', data);
+      return;
+    }
+    Object.assign(EVENT_CONFIG, data.data);
+    applyConfig();
+  }
+
+  function applyProductsData(data) {
+    if (!data || data.status !== 'ok' || !Array.isArray(data.data) || data.data.length === 0) {
+      console.warn('[Products] Bad response, using hardcoded fallback:', data);
+      return;
+    }
+    PRODUCTS = data.data;
+    renderProducts();
+  }
+
+  function loadViaJsonp(action, onSuccess) {
+    const callbackName = '__cb_' + action + '_' + Date.now();
+    window[callbackName] = function (data) {
+      onSuccess(data);
+      delete window[callbackName];
+      script.remove();
+    };
+    const script = document.createElement('script');
+    script.src = APPS_SCRIPT_URL + '?action=' + action + '&callback=' + callbackName;
+    script.onerror = () => console.error('[JSONP] Failed to load', action);
+    document.body.appendChild(script);
+  }
+
+  function loadData(action, onSuccess) {
+    if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf('PASTE_YOUR') === 0) {
+      console.warn('[Backend] APPS_SCRIPT_URL not set yet — using hardcoded values.');
+      return;
+    }
+    fetch(APPS_SCRIPT_URL + '?action=' + action)
+      .then(r => r.json())
+      .then(onSuccess)
+      .catch(() => {
+        console.warn('[Backend] fetch() blocked, falling back to JSONP for', action);
+        loadViaJsonp(action, onSuccess);
+      });
+  }
+
   applyConfig();
   renderProducts();
+  loadData('getConfig', applyConfigData);
+  loadData('getProducts', applyProductsData);
 </script>
 
 </body>
