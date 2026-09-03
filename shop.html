@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shop — Bellesogno</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Work Sans', sans-serif;
+    background: #f5f1e8;
+    color: #08090c;
+  }
+
+  a { text-decoration: none; color: inherit; }
+
+  /* ── NAV ── */
+  .top-bar {
+    background: #08090c;
+    padding: 22px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .monogram {
+    position: absolute;
+    left: 30px; top: 50%; transform: translateY(-50%);
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+  .monogram img { width: 100%; height: 100%; object-fit: cover; }
+
+  .nav-pill {
+    display: flex;
+    background: rgba(245,241,232,0.96);
+    border-radius: 100px;
+    padding: 6px;
+  }
+  .nav-pill a {
+    padding: 9px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 100px;
+  }
+  .nav-pill a.active { background: #08090c; color: #f5f1e8; }
+  .nav-pill a:not(.active):hover { background: rgba(8,9,12,0.06); }
+
+  .cart-link {
+    position: absolute;
+    right: 30px; top: 50%; transform: translateY(-50%);
+    color: #f5f1e8;
+    font-size: 20px;
+    position: relative;
+  }
+  .cart-badge {
+    display: none;
+    position: absolute;
+    top: -8px; right: -10px;
+    background: #9e222c;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── PAGE HEADER + FILTERS ── */
+  .shop-header {
+    padding: 50px 30px 20px;
+    text-align: center;
+  }
+  .shop-header h1 {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(30px, 6vw, 48px);
+    text-transform: lowercase;
+    letter-spacing: -0.5px;
+  }
+
+  .filters {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 24px 20px 10px;
+    flex-wrap: wrap;
+  }
+  .filter-pill {
+    padding: 8px 20px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid rgba(8,9,12,0.2);
+    cursor: pointer;
+    background: transparent;
+  }
+  .filter-pill.active { background: #08090c; color: #f5f1e8; border-color: #08090c; }
+
+  /* ── PRODUCT GRID ── */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 22px;
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .product-card { cursor: pointer; }
+
+  .product-swatch {
+    aspect-ratio: 3/4;
+    margin-bottom: 12px;
+    border-radius: 2px;
+    background: linear-gradient(160deg, #3d5a75, #1a2530);
+    position: relative;
+    overflow: hidden;
+  }
+  .product-swatch.perfume { background: linear-gradient(160deg, #5a4a3d, #2a2018); }
+  .product-swatch img { width: 100%; height: 100%; object-fit: cover; }
+
+  .product-category-tag {
+    position: absolute;
+    top: 10px; left: 10px;
+    font-size: 10px;
+    letter-spacing: 1px;
+    background: rgba(245,241,232,0.9);
+    color: #08090c;
+    padding: 3px 9px;
+    border-radius: 100px;
+  }
+
+  .product-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .product-price { font-size: 13px; color: #6b6558; }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6b6558;
+    font-size: 14px;
+    grid-column: 1 / -1;
+  }
+
+  /* ── QUICK-VIEW MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(8,9,12,0.7);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal-card {
+    background: #f5f1e8;
+    border-radius: 4px;
+    max-width: 720px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 640px) {
+    .modal-card { grid-template-columns: 1fr; }
+  }
+
+  .modal-image {
+    aspect-ratio: 3/4;
+    background: linear-gradient(160deg, #3d5a75, #1a2530);
+  }
+  .modal-image.perfume { background: linear-gradient(160deg, #5a4a3d, #2a2018); }
+  .modal-image img { width: 100%; height: 100%; object-fit: cover; }
+
+  .modal-info { padding: 30px; position: relative; }
+
+  .modal-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: none; border: none;
+    font-size: 22px; cursor: pointer;
+    color: #08090c;
+  }
+
+  .modal-category { font-size: 11px; letter-spacing: 1px; color: #6b6558; margin-bottom: 8px; }
+  .modal-name { font-family: 'Anton', sans-serif; font-size: 26px; text-transform: lowercase; margin-bottom: 10px; }
+  .modal-desc { font-size: 13px; color: #4a463f; line-height: 1.6; margin-bottom: 16px; }
+  .modal-price { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
+
+  .variant-label { font-size: 12px; font-weight: 600; margin-bottom: 8px; }
+  .variant-options { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .variant-btn {
+    padding: 8px 16px;
+    border: 1px solid rgba(8,9,12,0.25);
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    background: transparent;
+    cursor: pointer;
+  }
+  .variant-btn.selected { background: #08090c; color: #f5f1e8; border-color: #08090c; }
+  .variant-btn.out-of-stock { opacity: 0.35; cursor: not-allowed; text-decoration: line-through; }
+
+  .qty-row { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+  .qty-btn {
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 1px solid rgba(8,9,12,0.25);
+    background: transparent; font-size: 15px; cursor: pointer;
+  }
+  .qty-value { font-size: 15px; font-weight: 600; min-width: 20px; text-align: center; }
+
+  .add-to-cart-btn {
+    display: block; width: 100%;
+    padding: 14px;
+    background: #08090c; color: #f5f1e8;
+    border: none; border-radius: 4px;
+    font-size: 13px; font-weight: 700; letter-spacing: 1px;
+    cursor: pointer;
+    margin-bottom: 12px;
+  }
+  .add-to-cart-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .view-full-link { display: block; text-align: center; font-size: 12px; color: #6b6558; text-decoration: underline; }
+</style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <div class="monogram"><img src="logo.png" alt="Bellesogno" /></div>
+    <div class="nav-pill">
+      <a href="shop.html" class="active">Shop</a>
+      <a href="#">New Arrivals</a>
+      <a href="#">Fragrance</a>
+      <a href="#">About</a>
+    </div>
+    <a href="#" class="cart-link">🛍<span class="cart-badge" id="cartBadge">0</span></a>
+  </div>
+
+  <div class="shop-header">
+    <h1>shop everything</h1>
+  </div>
+
+  <div class="filters" id="filters">
+    <!-- Category pills render here, built from whatever categories actually exist -->
+  </div>
+
+  <div class="product-grid" id="productGrid">
+    <div class="empty-state">Loading products…</div>
+  </div>
+
+  <!-- ── Quick-view modal ── -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-card">
+      <div class="modal-image" id="modalImage"></div>
+      <div class="modal-info">
+        <button class="modal-close" id="modalClose">&times;</button>
+        <div class="modal-category" id="modalCategory"></div>
+        <div class="modal-name" id="modalName"></div>
+        <div class="modal-desc" id="modalDesc"></div>
+        <div class="modal-price" id="modalPrice"></div>
+
+        <div class="variant-label" id="variantLabelText"></div>
+        <div class="variant-options" id="variantOptions"></div>
+
+        <div class="qty-row">
+          <button class="qty-btn" id="qtyMinus">−</button>
+          <span class="qty-value" id="qtyValue">1</span>
+          <button class="qty-btn" id="qtyPlus">+</button>
+        </div>
+
+        <button class="add-to-cart-btn" id="addToCartBtn">Add to Cart</button>
+        <a class="view-full-link" id="viewFullLink">View full page →</a>
+      </div>
+    </div>
+  </div>
+
+<script src="shop-common.js"></script>
+<script>
+  let ALL_PRODUCTS = [];
+  let ACTIVE_CATEGORY = 'All';
+  let currentModalProduct = null;
+  let selectedVariant = null;
+  let selectedQty = 1;
+
+  function getCategories(products) {
+    const set = new Set(products.map(p => p.category).filter(Boolean));
+    return ['All', ...Array.from(set)];
+  }
+
+  function renderFilters() {
+    const categories = getCategories(ALL_PRODUCTS);
+    const filtersEl = document.getElementById('filters');
+    filtersEl.innerHTML = categories.map(cat =>
+      `<button class="filter-pill ${cat === ACTIVE_CATEGORY ? 'active' : ''}" data-cat="${cat}">${cat}</button>`
+    ).join('');
+
+    filtersEl.querySelectorAll('.filter-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        ACTIVE_CATEGORY = btn.dataset.cat;
+        renderFilters();
+        renderGrid();
+      });
+    });
+  }
+
+  function renderGrid() {
+    const grid = document.getElementById('productGrid');
+    const visible = ACTIVE_CATEGORY === 'All'
+      ? ALL_PRODUCTS
+      : ALL_PRODUCTS.filter(p => p.category === ACTIVE_CATEGORY);
+
+    if (visible.length === 0) {
+      grid.innerHTML = '<div class="empty-state">No products in this category yet.</div>';
+      return;
+    }
+
+    grid.innerHTML = visible.map(p => {
+      const swatchClass = p.category === 'Perfume' ? 'product-swatch perfume' : 'product-swatch';
+      const media = p.images ? `<img src="${p.images}" alt="${p.name}" />` : '';
+      return `
+        <div class="product-card" data-id="${p.productID}">
+          <div class="${swatchClass}">
+            <span class="product-category-tag">${p.category}</span>
+            ${media}
+          </div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-price">${formatPrice(p.basePrice)}</div>
+        </div>
+      `;
+    }).join('');
+
+    grid.querySelectorAll('.product-card').forEach(card => {
+      card.addEventListener('click', () => openModal(card.dataset.id));
+    });
+  }
+
+  function openModal(productID) {
+    const product = ALL_PRODUCTS.find(p => p.productID === productID);
+    if (!product) return;
+
+    currentModalProduct = product;
+    selectedQty = 1;
+    selectedVariant = (product.variants && product.variants.length > 0) ? product.variants[0] : null;
+
+    const imgEl = document.getElementById('modalImage');
+    imgEl.className = product.category === 'Perfume' ? 'modal-image perfume' : 'modal-image';
+    imgEl.innerHTML = product.images ? `<img src="${product.images}" alt="${product.name}" />` : '';
+
+    document.getElementById('modalCategory').textContent = product.category;
+    document.getElementById('modalName').textContent = product.name;
+    document.getElementById('modalDesc').textContent = product.description || '';
+    document.getElementById('viewFullLink').href = 'product.html?id=' + product.productID;
+
+    renderVariants();
+    updateModalPrice();
+    document.getElementById('qtyValue').textContent = selectedQty;
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function renderVariants() {
+    const wrap = document.getElementById('variantOptions');
+    const labelEl = document.getElementById('variantLabelText');
+    const variants = currentModalProduct.variants || [];
+
+    if (variants.length === 0) {
+      wrap.innerHTML = '';
+      labelEl.textContent = '';
+      return;
+    }
+
+    labelEl.textContent = 'Select option';
+    wrap.innerHTML = variants.map(v => {
+      const outOfStock = v.stock <= 0;
+      const isSelected = selectedVariant && selectedVariant.variantLabel === v.variantLabel;
+      return `<button class="variant-btn ${isSelected ? 'selected' : ''} ${outOfStock ? 'out-of-stock' : ''}"
+                data-label="${v.variantLabel}" ${outOfStock ? 'disabled' : ''}>${v.variantLabel}</button>`;
+    }).join('');
+
+    wrap.querySelectorAll('.variant-btn:not(.out-of-stock)').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedVariant = variants.find(v => v.variantLabel === btn.dataset.label);
+        renderVariants();
+        updateModalPrice();
+      });
+    });
+  }
+
+  function updateModalPrice() {
+    const price = selectedVariant ? selectedVariant.price : currentModalProduct.basePrice;
+    document.getElementById('modalPrice').textContent = formatPrice(price);
+
+    const btn = document.getElementById('addToCartBtn');
+    const hasVariants = currentModalProduct.variants && currentModalProduct.variants.length > 0;
+    btn.disabled = hasVariants && !selectedVariant;
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    currentModalProduct = null;
+  }
+
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  document.getElementById('modalOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'modalOverlay') closeModal();
+  });
+
+  document.getElementById('qtyMinus').addEventListener('click', () => {
+    if (selectedQty > 1) selectedQty--;
+    document.getElementById('qtyValue').textContent = selectedQty;
+  });
+  document.getElementById('qtyPlus').addEventListener('click', () => {
+    selectedQty++;
+    document.getElementById('qtyValue').textContent = selectedQty;
+  });
+
+  document.getElementById('addToCartBtn').addEventListener('click', () => {
+    if (!currentModalProduct) return;
+    addToCart({
+      productID: currentModalProduct.productID,
+      name: currentModalProduct.name,
+      variantLabel: selectedVariant ? selectedVariant.variantLabel : null,
+      price: selectedVariant ? selectedVariant.price : currentModalProduct.basePrice,
+      quantity: selectedQty
+    });
+    closeModal();
+  });
+
+  // ── Load products live from the Sheet ──
+  fetchProducts((products) => {
+    ALL_PRODUCTS = products;
+    renderFilters();
+    renderGrid();
+  });
+</script>
+
+</body>
+</html>

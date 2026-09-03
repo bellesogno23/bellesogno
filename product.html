@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bellesogno</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Work Sans', sans-serif;
+    background: #f5f1e8;
+    color: #08090c;
+  }
+
+  a { text-decoration: none; color: inherit; }
+
+  .top-bar {
+    background: #08090c;
+    padding: 22px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .monogram {
+    position: absolute;
+    left: 30px; top: 50%; transform: translateY(-50%);
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+  .monogram img { width: 100%; height: 100%; object-fit: cover; }
+
+  .nav-pill {
+    display: flex;
+    background: rgba(245,241,232,0.96);
+    border-radius: 100px;
+    padding: 6px;
+  }
+  .nav-pill a { padding: 9px 20px; font-size: 13px; font-weight: 600; border-radius: 100px; }
+  .nav-pill a.active { background: #08090c; color: #f5f1e8; }
+  .nav-pill a:not(.active):hover { background: rgba(8,9,12,0.06); }
+
+  .cart-link {
+    position: absolute;
+    right: 30px; top: 50%; transform: translateY(-50%);
+    color: #f5f1e8; font-size: 20px;
+  }
+  .cart-badge {
+    display: none;
+    position: absolute;
+    top: -8px; right: -10px;
+    background: #9e222c; color: #fff;
+    font-size: 10px; font-weight: 700;
+    width: 18px; height: 18px; border-radius: 50%;
+    align-items: center; justify-content: center;
+  }
+
+  .breadcrumb {
+    max-width: 1000px; margin: 0 auto;
+    padding: 24px 30px 0;
+    font-size: 12px; color: #6b6558;
+  }
+  .breadcrumb a { text-decoration: underline; }
+
+  .product-layout {
+    max-width: 1000px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 50px;
+    padding: 30px;
+  }
+  @media (max-width: 720px) {
+    .product-layout { grid-template-columns: 1fr; }
+  }
+
+  .product-image {
+    aspect-ratio: 3/4;
+    border-radius: 2px;
+    background: linear-gradient(160deg, #3d5a75, #1a2530);
+  }
+  .product-image.perfume { background: linear-gradient(160deg, #5a4a3d, #2a2018); }
+  .product-image img { width: 100%; height: 100%; object-fit: cover; }
+
+  .product-details { padding-top: 10px; }
+  .product-category { font-size: 12px; letter-spacing: 1px; color: #6b6558; margin-bottom: 10px; }
+  .product-name { font-family: 'Anton', sans-serif; font-size: clamp(28px, 5vw, 40px); text-transform: lowercase; margin-bottom: 14px; }
+  .product-desc { font-size: 14px; color: #4a463f; line-height: 1.7; margin-bottom: 20px; max-width: 380px; }
+  .product-price { font-size: 24px; font-weight: 700; margin-bottom: 28px; }
+
+  .variant-label { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+  .variant-options { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 26px; }
+  .variant-btn {
+    padding: 10px 20px; border: 1px solid rgba(8,9,12,0.25);
+    border-radius: 4px; font-size: 13px; font-weight: 600;
+    background: transparent; cursor: pointer;
+  }
+  .variant-btn.selected { background: #08090c; color: #f5f1e8; border-color: #08090c; }
+  .variant-btn.out-of-stock { opacity: 0.35; cursor: not-allowed; text-decoration: line-through; }
+
+  .qty-row { display: flex; align-items: center; gap: 16px; margin-bottom: 26px; }
+  .qty-btn { width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(8,9,12,0.25); background: transparent; font-size: 16px; cursor: pointer; }
+  .qty-value { font-size: 16px; font-weight: 600; min-width: 20px; text-align: center; }
+
+  .add-to-cart-btn {
+    display: block; width: 100%; max-width: 320px;
+    padding: 16px; background: #08090c; color: #f5f1e8;
+    border: none; border-radius: 4px;
+    font-size: 14px; font-weight: 700; letter-spacing: 1px; cursor: pointer;
+  }
+  .add-to-cart-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .not-found { text-align: center; padding: 100px 20px; color: #6b6558; }
+</style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <div class="monogram"><img src="logo.png" alt="Bellesogno" /></div>
+    <div class="nav-pill">
+      <a href="shop.html" class="active">Shop</a>
+      <a href="#">New Arrivals</a>
+      <a href="#">Fragrance</a>
+      <a href="#">About</a>
+    </div>
+    <a href="#" class="cart-link">🛍<span class="cart-badge" id="cartBadge">0</span></a>
+  </div>
+
+  <div class="breadcrumb"><a href="shop.html">← Back to shop</a></div>
+
+  <div id="pageContent">
+    <div class="not-found">Loading…</div>
+  </div>
+
+<script src="shop-common.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const productID = params.get('id');
+  let currentProduct = null;
+  let selectedVariant = null;
+  let selectedQty = 1;
+
+  function render() {
+    const container = document.getElementById('pageContent');
+
+    if (!currentProduct) {
+      container.innerHTML = '<div class="not-found">That product couldn\'t be found. <a href="shop.html">Back to shop →</a></div>';
+      return;
+    }
+
+    const p = currentProduct;
+    document.title = p.name + ' — Bellesogno';
+
+    const imgClass = p.category === 'Perfume' ? 'product-image perfume' : 'product-image';
+    const media = p.images ? `<img src="${p.images}" alt="${p.name}" />` : '';
+    const hasVariants = p.variants && p.variants.length > 0;
+
+    container.innerHTML = `
+      <div class="product-layout">
+        <div class="${imgClass}">${media}</div>
+        <div class="product-details">
+          <div class="product-category">${p.category}</div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-desc">${p.description || ''}</div>
+          <div class="product-price" id="priceDisplay">${formatPrice(selectedVariant ? selectedVariant.price : p.basePrice)}</div>
+
+          ${hasVariants ? `
+            <div class="variant-label">Select option</div>
+            <div class="variant-options" id="variantOptions"></div>
+          ` : ''}
+
+          <div class="qty-row">
+            <button class="qty-btn" id="qtyMinus">−</button>
+            <span class="qty-value" id="qtyValue">${selectedQty}</span>
+            <button class="qty-btn" id="qtyPlus">+</button>
+          </div>
+
+          <button class="add-to-cart-btn" id="addToCartBtn">Add to Cart</button>
+        </div>
+      </div>
+    `;
+
+    if (hasVariants) renderVariants();
+    wireControls();
+  }
+
+  function renderVariants() {
+    const wrap = document.getElementById('variantOptions');
+    const variants = currentProduct.variants;
+
+    wrap.innerHTML = variants.map(v => {
+      const outOfStock = v.stock <= 0;
+      const isSelected = selectedVariant && selectedVariant.variantLabel === v.variantLabel;
+      return `<button class="variant-btn ${isSelected ? 'selected' : ''} ${outOfStock ? 'out-of-stock' : ''}"
+                data-label="${v.variantLabel}" ${outOfStock ? 'disabled' : ''}>${v.variantLabel}</button>`;
+    }).join('');
+
+    wrap.querySelectorAll('.variant-btn:not(.out-of-stock)').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedVariant = variants.find(v => v.variantLabel === btn.dataset.label);
+        renderVariants();
+        document.getElementById('priceDisplay').textContent = formatPrice(selectedVariant.price);
+        updateAddToCartState();
+      });
+    });
+  }
+
+  function updateAddToCartState() {
+    const btn = document.getElementById('addToCartBtn');
+    const hasVariants = currentProduct.variants && currentProduct.variants.length > 0;
+    if (btn) btn.disabled = hasVariants && !selectedVariant;
+  }
+
+  function wireControls() {
+    document.getElementById('qtyMinus').addEventListener('click', () => {
+      if (selectedQty > 1) selectedQty--;
+      document.getElementById('qtyValue').textContent = selectedQty;
+    });
+    document.getElementById('qtyPlus').addEventListener('click', () => {
+      selectedQty++;
+      document.getElementById('qtyValue').textContent = selectedQty;
+    });
+    document.getElementById('addToCartBtn').addEventListener('click', () => {
+      addToCart({
+        productID: currentProduct.productID,
+        name: currentProduct.name,
+        variantLabel: selectedVariant ? selectedVariant.variantLabel : null,
+        price: selectedVariant ? selectedVariant.price : currentProduct.basePrice,
+        quantity: selectedQty
+      });
+    });
+    updateAddToCartState();
+  }
+
+  fetchProducts((products) => {
+    currentProduct = products.find(p => p.productID === productID) || null;
+    selectedVariant = (currentProduct && currentProduct.variants && currentProduct.variants.length > 0)
+      ? currentProduct.variants[0] : null;
+    render();
+  });
+</script>
+
+</body>
+</html>
