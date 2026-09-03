@@ -95,26 +95,46 @@
   .product-grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 22px;
   }
-  .product-card { cursor: pointer; }
+  .product-card { cursor: pointer; transition: transform 0.25s ease, box-shadow 0.25s ease; }
+  .product-card:hover { transform: translateY(-5px); box-shadow: 0 12px 24px rgba(8,9,12,0.12); }
   .product-swatch {
     aspect-ratio: 3/4; margin-bottom: 12px; border-radius: 2px; position: relative; overflow: hidden;
     background: linear-gradient(160deg, #3d5a75, #1a2530);
   }
+  .product-swatch img { transition: transform 0.45s ease; }
+  .product-card:hover .product-swatch img { transform: scale(1.06); }
   .product-swatch img { width: 100%; height: 100%; object-fit: cover; }
   .product-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
   .product-price { font-size: 13px; color: #6b6558; }
   .empty-state { text-align: center; padding: 40px 20px; color: #6b6558; font-size: 14px; grid-column: 1/-1; }
 
   /* ── Quick-view modal (same pattern as shop.html / fragrance.html) ── */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0; background: rgba(8,9,12,0.7);
-    z-index: 100; align-items: center; justify-content: center; padding: 20px;
+    .modal-overlay {
+    display: flex;
+    position: fixed; inset: 0;
+    background: rgba(8,9,12,0.7);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity 0.25s ease;
   }
-  .modal-overlay.open { display: flex; }
+  .modal-overlay.open { opacity: 1; visibility: visible; pointer-events: auto; }
+
   .modal-card {
-    background: #f5f1e8; border-radius: 4px; max-width: 720px; width: 100%;
-    max-height: 90vh; overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr;
+    background: #f5f1e8;
+    border-radius: 4px;
+    max-width: 720px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    transform: scale(0.94);
+    transition: transform 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
   }
+  .modal-overlay.open .modal-card { transform: scale(1); }
   @media (max-width: 640px) { .modal-card { grid-template-columns: 1fr; } }
   .modal-image { aspect-ratio: 3/4; background: linear-gradient(160deg, #3d5a75, #1a2530); }
   .modal-image img { width: 100%; height: 100%; object-fit: cover; }
@@ -138,6 +158,51 @@
   }
   .add-to-cart-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .view-full-link { display: block; text-align: center; font-size: 12px; color: #6b6558; text-decoration: underline; }
+
+  /* ── Scroll reveal ── */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── Cart badge pop ── */
+  .cart-badge.pop { animation: badgePop 0.35s ease; }
+  @keyframes badgePop { 0% { transform: scale(1); } 45% { transform: scale(1.45); } 100% { transform: scale(1); } }
+
+  /* ── Button micro-interactions (site-wide) ── */
+  button, a.social-follow-btn, a.whatsapp-btn, a.whatsapp-recap-btn, a.place-order-btn, a.add-to-cart-btn {
+    transition: transform 0.15s ease;
+  }
+  button:active, a.social-follow-btn:active, a.whatsapp-btn:active, a.whatsapp-recap-btn:active,
+  a.place-order-btn:active, a.add-to-cart-btn:active {
+    transform: scale(0.96);
+  }
+
+  /* ── Mobile nav (hamburger + full-screen overlay) ── */
+  .hamburger-btn {
+    display: none;
+    background: none; border: none; color: #f5f1e8;
+    font-size: 22px; cursor: pointer; z-index: 5;
+  }
+  .mobile-nav-overlay {
+    display: none;
+    position: fixed; inset: 0; background: #08090c; z-index: 200;
+    flex-direction: column; align-items: center; justify-content: center; gap: 26px;
+    opacity: 0; transition: opacity 0.25s ease;
+  }
+  .mobile-nav-overlay.open { display: flex; opacity: 1; }
+  .mobile-nav-overlay a {
+    color: rgba(245,241,232,0.7); font-size: 22px; font-weight: 600;
+    font-family: 'Work Sans', sans-serif;
+  }
+  .mobile-nav-overlay a.active { color: #f5f1e8; }
+  .mobile-nav-close {
+    position: absolute; top: 26px; right: 26px;
+    background: none; border: none; color: #f5f1e8; font-size: 28px; cursor: pointer;
+  }
+
+  @media (max-width: 640px) {
+    .nav-pill { display: none; }
+    .hamburger-btn { display: block; }
+  }
 </style>
 </head>
 <body>
@@ -151,6 +216,15 @@
       <a href="fragrance.html">Fragrance</a>
       <a href="about.html">About</a>
     </div>
+    <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+    <div class="mobile-nav-overlay" id="mobileNavOverlay">
+      <button class="mobile-nav-close" id="mobileNavClose">✕</button>
+      <a href="shop.html">Shop</a>
+      <a href="clothes.html" class="active">Clothes</a>
+      <a href="fragrance.html">Fragrance</a>
+      <a href="about.html">About</a>
+    </div>
+
     <a href="cart.html" class="cart-link">🛍<span class="cart-badge" id="cartBadge">0</span></a>
   </div>
 
@@ -192,6 +266,7 @@
   </div>
 
 <script src="shop-common.js"></script>
+<script src="scroll-reveal.js"></script>
 <script>
   // ── Sliding nav pill indicator ──
   (function initNavSlide() {
@@ -219,6 +294,17 @@
     requestAnimationFrame(() => { indicator.style.transition = ''; });
   })();
 
+  // ── Mobile nav overlay ──
+  (function initMobileNav() {
+    const btn = document.getElementById('hamburgerBtn');
+    const overlay = document.getElementById('mobileNavOverlay');
+    const closeBtn = document.getElementById('mobileNavClose');
+    if (!btn || !overlay) return;
+    btn.addEventListener('click', () => overlay.classList.add('open'));
+    closeBtn.addEventListener('click', () => overlay.classList.remove('open'));
+  })();
+
+
   let ALL_PRODUCTS = [];
   let currentModalProduct = null;
   let selectedVariant = null;
@@ -236,7 +322,7 @@
     grid.innerHTML = clothing.map(p => {
       const media = p.images ? `<img src="${p.images}" alt="${p.name}" onerror="this.style.display='none'" />` : '';
       return `
-        <div class="product-card" data-id="${p.productID}">
+        <div class="product-card reveal" data-id="${p.productID}">
           <div class="product-swatch">${media}</div>
           <div class="product-name">${p.name}</div>
           <div class="product-price">${formatPrice(p.basePrice)}</div>
@@ -247,6 +333,7 @@
     grid.querySelectorAll('.product-card').forEach(card => {
       card.addEventListener('click', () => openModal(card.dataset.id));
     });
+    initScrollReveal();
   }
 
   function openModal(productID) {
