@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Clothes — Bellesogno</title>
+<meta name="description" content="Bellesogno clothing — built with intention, meant to be worn until it's actually worn out." />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Work Sans', sans-serif; background: #f5f1e8; color: #08090c; }
+  a { text-decoration: none; color: inherit; }
+
+  .top-bar {
+    background: #08090c;
+    padding: 22px 30px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .monogram {
+    position: absolute; left: 30px; top: 50%; transform: translateY(-50%);
+    width: 42px; height: 42px; border-radius: 50%; overflow: hidden;
+  }
+  .monogram img { width: 100%; height: 100%; object-fit: cover; }
+  .nav-pill { display: flex; background: rgba(245,241,232,0.96); border-radius: 100px; padding: 6px; }
+  .nav-pill a { padding: 9px 20px; font-size: 13px; font-weight: 600; border-radius: 100px; }
+  .nav-pill a.active { background: #08090c; color: #f5f1e8; }
+  .nav-pill a:not(.active):hover { background: rgba(8,9,12,0.06); }
+  .cart-link { position: absolute; right: 30px; top: 50%; transform: translateY(-50%); color: #f5f1e8; font-size: 20px; }
+  .cart-badge {
+    display: none; position: absolute; top: -8px; right: -10px;
+    background: #9e222c; color: #fff; font-size: 10px; font-weight: 700;
+    width: 18px; height: 18px; border-radius: 50%; align-items: center; justify-content: center;
+  }
+
+  /* ── Editorial intro — cold blue, matching the site's main hero mood ── */
+  .clothes-intro {
+    background: radial-gradient(ellipse at 60% 20%, #3d5a75 0%, #1a2530 45%, #08090c 85%);
+    padding: 90px 30px 70px;
+    text-align: center;
+    color: #f5f1e8;
+  }
+  .clothes-eyebrow {
+    font-size: 12px; letter-spacing: 3px; text-transform: uppercase;
+    color: #7fa3c2; margin-bottom: 18px;
+  }
+  .clothes-title {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(36px, 7vw, 58px);
+    text-transform: lowercase; letter-spacing: -1px;
+    margin-bottom: 22px;
+  }
+  .clothes-copy {
+    max-width: 480px; margin: 0 auto;
+    font-size: 15px; line-height: 1.75;
+    color: rgba(245,241,232,0.75);
+  }
+
+  .showcase { padding: 60px 30px 80px; max-width: 1000px; margin: 0 auto; }
+  .showcase h2 {
+    font-family: 'Anton', sans-serif; font-size: clamp(24px, 5vw, 32px);
+    text-transform: lowercase; letter-spacing: -0.5px; margin-bottom: 30px; text-align: center;
+  }
+  .product-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 22px;
+  }
+  .product-card { cursor: pointer; }
+  .product-swatch {
+    aspect-ratio: 3/4; margin-bottom: 12px; border-radius: 2px; position: relative; overflow: hidden;
+    background: linear-gradient(160deg, #3d5a75, #1a2530);
+  }
+  .product-swatch img { width: 100%; height: 100%; object-fit: cover; }
+  .product-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .product-price { font-size: 13px; color: #6b6558; }
+  .empty-state { text-align: center; padding: 40px 20px; color: #6b6558; font-size: 14px; grid-column: 1/-1; }
+
+  /* ── Quick-view modal (same pattern as shop.html / fragrance.html) ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(8,9,12,0.7);
+    z-index: 100; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-card {
+    background: #f5f1e8; border-radius: 4px; max-width: 720px; width: 100%;
+    max-height: 90vh; overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 640px) { .modal-card { grid-template-columns: 1fr; } }
+  .modal-image { aspect-ratio: 3/4; background: linear-gradient(160deg, #3d5a75, #1a2530); }
+  .modal-image img { width: 100%; height: 100%; object-fit: cover; }
+  .modal-info { padding: 30px; position: relative; }
+  .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 22px; cursor: pointer; color: #08090c; }
+  .modal-category { font-size: 11px; letter-spacing: 1px; color: #6b6558; margin-bottom: 8px; }
+  .modal-name { font-family: 'Anton', sans-serif; font-size: 26px; text-transform: lowercase; margin-bottom: 10px; }
+  .modal-desc { font-size: 13px; color: #4a463f; line-height: 1.6; margin-bottom: 16px; }
+  .modal-price { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
+  .variant-label { font-size: 12px; font-weight: 600; margin-bottom: 8px; }
+  .variant-options { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .variant-btn { padding: 8px 16px; border: 1px solid rgba(8,9,12,0.25); border-radius: 4px; font-size: 12px; font-weight: 600; background: transparent; cursor: pointer; }
+  .variant-btn.selected { background: #08090c; color: #f5f1e8; border-color: #08090c; }
+  .variant-btn.out-of-stock { opacity: 0.35; cursor: not-allowed; text-decoration: line-through; }
+  .qty-row { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+  .qty-btn { width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(8,9,12,0.25); background: transparent; font-size: 15px; cursor: pointer; }
+  .qty-value { font-size: 15px; font-weight: 600; min-width: 20px; text-align: center; }
+  .add-to-cart-btn {
+    display: block; width: 100%; padding: 14px; background: #08090c; color: #f5f1e8;
+    border: none; border-radius: 4px; font-size: 13px; font-weight: 700; letter-spacing: 1px; cursor: pointer; margin-bottom: 12px;
+  }
+  .add-to-cart-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .view-full-link { display: block; text-align: center; font-size: 12px; color: #6b6558; text-decoration: underline; }
+</style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <a href="index.html" class="monogram"><img src="logo.png" alt="Bellesogno" /></a>
+    <div class="nav-pill">
+      <a href="shop.html">Shop</a>
+      <a href="clothes.html" class="active">Clothes</a>
+      <a href="fragrance.html">Fragrance</a>
+      <a href="about.html">About</a>
+    </div>
+    <a href="#" class="cart-link">🛍<span class="cart-badge" id="cartBadge">0</span></a>
+  </div>
+
+  <div class="clothes-intro">
+    <div class="clothes-eyebrow">Cut &amp; Craft</div>
+    <div class="clothes-title">dressed with intention</div>
+    <div class="clothes-copy">
+      Every Bellesogno garment starts with the cut — structured enough to hold its shape, relaxed enough to actually live in. We choose fabric the way we choose everything else here: slowly, and only when it's right. No filler pieces, no seasonal padding. Just clothing built to be worn until it's actually worn out.
+    </div>
+  </div>
+
+  <div class="showcase">
+    <h2>the collection</h2>
+    <div class="product-grid" id="productGrid">
+      <div class="empty-state">Loading…</div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-card">
+      <div class="modal-image" id="modalImage"></div>
+      <div class="modal-info">
+        <button class="modal-close" id="modalClose">&times;</button>
+        <div class="modal-category" id="modalCategory"></div>
+        <div class="modal-name" id="modalName"></div>
+        <div class="modal-desc" id="modalDesc"></div>
+        <div class="modal-price" id="modalPrice"></div>
+        <div class="variant-label" id="variantLabelText"></div>
+        <div class="variant-options" id="variantOptions"></div>
+        <div class="qty-row">
+          <button class="qty-btn" id="qtyMinus">−</button>
+          <span class="qty-value" id="qtyValue">1</span>
+          <button class="qty-btn" id="qtyPlus">+</button>
+        </div>
+        <button class="add-to-cart-btn" id="addToCartBtn">Add to Cart</button>
+        <a class="view-full-link" id="viewFullLink">View full page →</a>
+      </div>
+    </div>
+  </div>
+
+<script src="shop-common.js"></script>
+<script>
+  let ALL_PRODUCTS = [];
+  let currentModalProduct = null;
+  let selectedVariant = null;
+  let selectedQty = 1;
+
+  function renderGrid() {
+    const grid = document.getElementById('productGrid');
+    const clothing = ALL_PRODUCTS.filter(p => p.category === 'Clothing');
+
+    if (clothing.length === 0) {
+      grid.innerHTML = '<div class="empty-state">No clothing listed yet.</div>';
+      return;
+    }
+
+    grid.innerHTML = clothing.map(p => {
+      const media = p.images ? `<img src="${p.images}" alt="${p.name}" onerror="this.style.display='none'" />` : '';
+      return `
+        <div class="product-card" data-id="${p.productID}">
+          <div class="product-swatch">${media}</div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-price">${formatPrice(p.basePrice)}</div>
+        </div>
+      `;
+    }).join('');
+
+    grid.querySelectorAll('.product-card').forEach(card => {
+      card.addEventListener('click', () => openModal(card.dataset.id));
+    });
+  }
+
+  function openModal(productID) {
+    const product = ALL_PRODUCTS.find(p => p.productID === productID);
+    if (!product) return;
+
+    currentModalProduct = product;
+    selectedQty = 1;
+    selectedVariant = (product.variants && product.variants.length > 0) ? product.variants[0] : null;
+
+    const imgEl = document.getElementById('modalImage');
+    imgEl.innerHTML = product.images ? `<img src="${product.images}" alt="${product.name}" onerror="this.style.display='none'" />` : '';
+
+    document.getElementById('modalCategory').textContent = product.category;
+    document.getElementById('modalName').textContent = product.name;
+    document.getElementById('modalDesc').textContent = product.description || '';
+    document.getElementById('viewFullLink').href = 'product.html?id=' + product.productID;
+
+    renderVariants();
+    updateModalPrice();
+    document.getElementById('qtyValue').textContent = selectedQty;
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function renderVariants() {
+    const wrap = document.getElementById('variantOptions');
+    const labelEl = document.getElementById('variantLabelText');
+    const variants = currentModalProduct.variants || [];
+
+    if (variants.length === 0) {
+      wrap.innerHTML = '';
+      labelEl.textContent = '';
+      return;
+    }
+
+    labelEl.textContent = 'Select option';
+    wrap.innerHTML = variants.map(v => {
+      const outOfStock = v.stock <= 0;
+      const isSelected = selectedVariant && selectedVariant.variantLabel === v.variantLabel;
+      return `<button class="variant-btn ${isSelected ? 'selected' : ''} ${outOfStock ? 'out-of-stock' : ''}"
+                data-label="${v.variantLabel}" ${outOfStock ? 'disabled' : ''}>${v.variantLabel}</button>`;
+    }).join('');
+
+    wrap.querySelectorAll('.variant-btn:not(.out-of-stock)').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedVariant = variants.find(v => v.variantLabel === btn.dataset.label);
+        renderVariants();
+        updateModalPrice();
+      });
+    });
+  }
+
+  function updateModalPrice() {
+    const price = selectedVariant ? selectedVariant.price : currentModalProduct.basePrice;
+    document.getElementById('modalPrice').textContent = formatPrice(price);
+    const btn = document.getElementById('addToCartBtn');
+    const hasVariants = currentModalProduct.variants && currentModalProduct.variants.length > 0;
+    btn.disabled = hasVariants && !selectedVariant;
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    currentModalProduct = null;
+  }
+
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  document.getElementById('modalOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'modalOverlay') closeModal();
+  });
+  document.getElementById('qtyMinus').addEventListener('click', () => {
+    if (selectedQty > 1) selectedQty--;
+    document.getElementById('qtyValue').textContent = selectedQty;
+  });
+  document.getElementById('qtyPlus').addEventListener('click', () => {
+    selectedQty++;
+    document.getElementById('qtyValue').textContent = selectedQty;
+  });
+  document.getElementById('addToCartBtn').addEventListener('click', () => {
+    if (!currentModalProduct) return;
+    addToCart({
+      productID: currentModalProduct.productID,
+      name: currentModalProduct.name,
+      variantLabel: selectedVariant ? selectedVariant.variantLabel : null,
+      price: selectedVariant ? selectedVariant.price : currentModalProduct.basePrice,
+      quantity: selectedQty
+    });
+    closeModal();
+  });
+
+  fetchProducts((products) => {
+    ALL_PRODUCTS = products;
+    renderGrid();
+  });
+</script>
+
+</body>
+</html>
