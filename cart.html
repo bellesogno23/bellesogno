@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Your Cart — Bellesogno</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Work Sans', sans-serif; background: #f5f1e8; color: #08090c; }
+  a { text-decoration: none; color: inherit; }
+
+  .top-bar {
+    background: #08090c; padding: 22px 30px;
+    display: flex; align-items: center; justify-content: center; position: relative;
+  }
+  .monogram {
+    position: absolute; left: 30px; top: 50%; transform: translateY(-50%);
+    width: 42px; height: 42px; border-radius: 50%; overflow: hidden;
+  }
+  .monogram img { width: 100%; height: 100%; object-fit: cover; }
+  .nav-pill { display: flex; background: rgba(245,241,232,0.96); border-radius: 100px; padding: 6px; }
+  .nav-pill a { padding: 9px 20px; font-size: 13px; font-weight: 600; border-radius: 100px; }
+  .nav-pill a.active { background: #08090c; color: #f5f1e8; }
+  .nav-pill a:not(.active):hover { background: rgba(8,9,12,0.06); }
+  .cart-link { position: absolute; right: 30px; top: 50%; transform: translateY(-50%); color: #f5f1e8; font-size: 20px; }
+  .cart-badge {
+    display: none; position: absolute; top: -8px; right: -10px;
+    background: #9e222c; color: #fff; font-size: 10px; font-weight: 700;
+    width: 18px; height: 18px; border-radius: 50%; align-items: center; justify-content: center;
+  }
+
+  .page-header { padding: 50px 30px 10px; text-align: center; }
+  .page-header h1 {
+    font-family: 'Anton', sans-serif; font-size: clamp(28px, 6vw, 44px);
+    text-transform: lowercase; letter-spacing: -0.5px;
+  }
+
+  .cart-layout {
+    max-width: 900px; margin: 0 auto;
+    padding: 40px 30px 80px;
+    display: grid; grid-template-columns: 1.3fr 1fr; gap: 50px;
+  }
+  @media (max-width: 720px) { .cart-layout { grid-template-columns: 1fr; } }
+
+  .cart-item {
+    display: flex; gap: 16px; align-items: center;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(8,9,12,0.1);
+  }
+  .cart-item-swatch {
+    width: 70px; height: 88px; border-radius: 2px; flex-shrink: 0;
+    background: linear-gradient(160deg, #3d5a75, #1a2530);
+  }
+  .cart-item-swatch.perfume { background: linear-gradient(160deg, #5a4a3d, #2a2018); }
+  .cart-item-info { flex: 1; min-width: 0; }
+  .cart-item-name { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+  .cart-item-variant { font-size: 12px; color: #6b6558; margin-bottom: 8px; }
+  .cart-item-qty-row { display: flex; align-items: center; gap: 10px; }
+  .qty-btn {
+    width: 24px; height: 24px; border-radius: 50%;
+    border: 1px solid rgba(8,9,12,0.25); background: transparent; font-size: 13px; cursor: pointer;
+  }
+  .qty-value { font-size: 13px; font-weight: 600; min-width: 16px; text-align: center; }
+  .cart-item-price { font-size: 14px; font-weight: 700; text-align: right; white-space: nowrap; }
+  .remove-link { font-size: 11px; color: #9e222c; text-decoration: underline; cursor: pointer; margin-top: 6px; display: inline-block; }
+
+  .empty-cart { text-align: center; padding: 60px 20px; color: #6b6558; }
+  .empty-cart a { text-decoration: underline; color: #08090c; }
+
+  .cart-total-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 0 0; font-size: 16px; font-weight: 700;
+  }
+
+  /* ── Checkout form ── */
+  .checkout-panel {
+    background: rgba(8,9,12,0.03);
+    border: 1px solid rgba(8,9,12,0.1);
+    border-radius: 8px;
+    padding: 26px;
+    align-self: start;
+  }
+  .checkout-panel h2 {
+    font-family: 'Anton', sans-serif; font-size: 20px;
+    text-transform: lowercase; margin-bottom: 18px;
+  }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; }
+  .field input, .field textarea {
+    width: 100%; padding: 11px 12px;
+    border: 1px solid rgba(8,9,12,0.2); border-radius: 6px;
+    font-family: 'Work Sans', sans-serif; font-size: 13px;
+    background: #fff;
+  }
+  .field textarea { resize: vertical; min-height: 60px; }
+  .cod-note {
+    font-size: 12px; color: #4a463f; line-height: 1.5;
+    background: rgba(158,34,44,0.06); border: 1px solid rgba(158,34,44,0.2);
+    padding: 10px 12px; border-radius: 6px; margin-bottom: 18px;
+  }
+  .place-order-btn {
+    display: block; width: 100%; padding: 15px;
+    background: #08090c; color: #f5f1e8; border: none; border-radius: 6px;
+    font-size: 14px; font-weight: 700; letter-spacing: 1px; cursor: pointer;
+  }
+  .place-order-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .field-error { font-size: 11px; color: #9e222c; margin-top: 4px; display: none; }
+
+  /* ── Smooth caret (see smooth-caret.js) ── */
+  .smooth-caret-mirror {
+    position: absolute; top: 0; left: 0;
+    visibility: hidden; pointer-events: none; z-index: -1; overflow: hidden;
+  }
+  .smooth-caret {
+    position: absolute; top: 0; left: 0;
+    width: 2px; background: #9e222c;
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+    opacity: 0;
+  }
+  .smooth-caret.active { animation: caretBlink 1.1s steps(1) infinite; }
+  @keyframes caretBlink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+  /* ── Success state ── */
+  .success-screen { text-align: center; padding: 100px 30px; }
+  .success-screen h2 { font-family: 'Anton', sans-serif; font-size: 32px; text-transform: lowercase; margin-bottom: 14px; }
+  .success-screen p { font-size: 14px; color: #4a463f; max-width: 380px; margin: 0 auto 24px; line-height: 1.6; }
+  .order-id-chip {
+    display: inline-block; font-size: 13px; font-weight: 700;
+    background: rgba(8,9,12,0.06); padding: 8px 18px; border-radius: 100px; margin-bottom: 24px;
+  }
+
+  /* ── Smooth spring-animated caret (replaces the native blinking cursor
+     on every text field in the checkout form) ── */
+  .field { position: relative; }
+  .smooth-caret {
+    position: absolute;
+    width: 2px;
+    background: #08090c;
+    top: 0; left: 0;
+    pointer-events: none;
+    transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 0;
+  }
+  .smooth-caret.blink { animation: caretBlink 1s step-end infinite; }
+  @keyframes caretBlink { 50% { opacity: 0; } }
+  .smooth-mirror {
+    position: absolute; top: 0; left: 0;
+    visibility: hidden;
+    pointer-events: none;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+</style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <a href="index.html" class="monogram"><img src="logo.png" alt="Bellesogno" /></a>
+    <div class="nav-pill">
+      <a href="shop.html">Shop</a>
+      <a href="clothes.html">Clothes</a>
+      <a href="fragrance.html">Fragrance</a>
+      <a href="about.html">About</a>
+    </div>
+    <a href="cart.html" class="cart-link active">🛍<span class="cart-badge" id="cartBadge">0</span></a>
+  </div>
+
+  <div id="pageContent">
+    <div class="page-header"><h1>your cart</h1></div>
+    <div class="cart-layout" id="cartLayout"></div>
+  </div>
+
+  <!-- Hidden iframe target for the checkout form — lets us submit cross-origin
+       to Apps Script without a CORS-blocked redirect. We can't read the
+       response back, so we just show a success screen after a short delay. -->
+  <iframe name="hiddenFrame" style="display:none;"></iframe>
+
+<script src="shop-common.js"></script>
+<script src="smooth-caret.js"></script>
+<script>
+  function initSmoothCaret(input) {
+  const wrap = input.parentElement;
+  const caret = document.createElement('div');
+  caret.className = 'smooth-caret';
+  wrap.appendChild(caret);
+
+  const mirror = document.createElement('div');
+  mirror.className = 'smooth-mirror';
+  wrap.appendChild(mirror);
+
+  const isTextarea = input.tagName === 'TEXTAREA';
+  let blinkTimeout = null;
+
+  function syncMirrorStyle() {
+    const cs = getComputedStyle(input);
+    ['fontFamily','fontSize','fontWeight','letterSpacing','lineHeight',
+     'paddingTop','paddingRight','paddingBottom','paddingLeft',
+     'borderTopWidth','borderRightWidth','borderBottomWidth','borderLeftWidth',
+     'boxSizing'].forEach(prop => { mirror.style[prop] = cs[prop]; });
+    // Align the mirror with the INPUT's actual position within the wrapper
+    // (the wrapper also contains the <label>, so this can't be assumed 0,0).
+    mirror.style.left = input.offsetLeft + 'px';
+    mirror.style.top = input.offsetTop + 'px';
+    mirror.style.width = input.offsetWidth + 'px';
+    mirror.style.whiteSpace = isTextarea ? 'pre-wrap' : 'pre';
+    caret.style.height = cs.fontSize;
+  }
+
+  function updateCaret() {
+    const pos = input.selectionStart;
+    const before = input.value.slice(0, pos);
+    mirror.textContent = before;
+    const marker = document.createElement('span');
+    marker.textContent = '\u200b';
+    mirror.appendChild(marker);
+
+    const markerRect = marker.getBoundingClientRect();
+    const wrapRect = wrap.getBoundingClientRect();
+    const x = markerRect.left - wrapRect.left;
+    const y = markerRect.top - wrapRect.top + (parseFloat(getComputedStyle(input).fontSize) * 0.1);
+
+    caret.style.transform = `translate(${x}px, ${y}px)`;
+  }
+
+  function pauseBlink() {
+    caret.classList.remove('blink');
+    clearTimeout(blinkTimeout);
+    blinkTimeout = setTimeout(() => caret.classList.add('blink'), 400);
+  }
+
+  // Only hide the native cursor once our custom one is actually ready —
+  // if anything above fails, the field still works normally.
+  input.style.caretColor = 'transparent';
+  syncMirrorStyle();
+
+  input.addEventListener('input', () => { updateCaret(); pauseBlink(); });
+  input.addEventListener('click', () => { updateCaret(); pauseBlink(); });
+  input.addEventListener('keyup', () => { updateCaret(); pauseBlink(); });
+  input.addEventListener('focus', () => { caret.style.opacity = '1'; updateCaret(); pauseBlink(); });
+  input.addEventListener('blur', () => { caret.style.opacity = '0'; caret.classList.remove('blink'); });
+  window.addEventListener('resize', () => { syncMirrorStyle(); updateCaret(); });
+}
+
+function renderCart() {
+    const cart = getCart();
+    const layout = document.getElementById('cartLayout');
+
+    if (cart.length === 0) {
+      layout.innerHTML = `
+        <div class="empty-cart" style="grid-column: 1 / -1;">
+          Your cart is empty. <a href="shop.html">Browse the shop →</a>
+        </div>
+      `;
+      return;
+    }
+
+    const itemsHtml = cart.map(item => {
+      const swatchClass = item.productID && item.productID.startsWith('P00') ? 'cart-item-swatch' : 'cart-item-swatch';
+      return `
+        <div class="cart-item" data-pid="${item.productID}" data-variant="${item.variantLabel || ''}">
+          <div class="${swatchClass}"></div>
+          <div class="cart-item-info">
+            <div class="cart-item-name">${item.name}</div>
+            ${item.variantLabel ? `<div class="cart-item-variant">${item.variantLabel}</div>` : ''}
+            <div class="cart-item-qty-row">
+              <button class="qty-btn qty-minus">−</button>
+              <span class="qty-value">${item.quantity}</span>
+              <button class="qty-btn qty-plus">+</button>
+            </div>
+            <a class="remove-link">Remove</a>
+          </div>
+          <div class="cart-item-price">${formatPrice(item.price * item.quantity)}</div>
+        </div>
+      `;
+    }).join('');
+
+    const total = getCartTotal();
+
+    layout.innerHTML = `
+      <div>
+        ${itemsHtml}
+        <div class="cart-total-row"><span>Total</span><span>${formatPrice(total)}</span></div>
+      </div>
+      <div class="checkout-panel">
+        <h2>checkout details</h2>
+        <div class="cod-note">Cash on delivery — pay when your order arrives at your door. No online payment needed.</div>
+        <form id="checkoutForm">
+          <div class="field">
+            <label for="customerName">Full name</label>
+            <input type="text" id="customerName" required />
+          </div>
+          <div class="field">
+            <label for="phone">Phone number</label>
+            <input type="text" id="phone" placeholder="01XXXXXXXXX" required />
+          </div>
+          <div class="field">
+            <label for="address">Delivery address</label>
+            <textarea id="address" required></textarea>
+          </div>
+          <div class="field">
+            <label for="notes">Notes <span style="font-weight:400;opacity:0.6;">(optional)</span></label>
+            <textarea id="notes"></textarea>
+          </div>
+          <button type="submit" class="place-order-btn" id="placeOrderBtn">Place Order — ${formatPrice(total)}</button>
+        </form>
+      </div>
+    `;
+
+    // Wire up quantity/remove controls per item
+    layout.querySelectorAll('.cart-item').forEach(row => {
+      const pid = row.dataset.pid;
+      const variant = row.dataset.variant || null;
+      const item = cart.find(c => c.productID === pid && (c.variantLabel || '') === (variant || ''));
+
+      row.querySelector('.qty-plus').addEventListener('click', () => {
+        updateCartItemQuantity(pid, variant, item.quantity + 1);
+        renderCart();
+      });
+      row.querySelector('.qty-minus').addEventListener('click', () => {
+        updateCartItemQuantity(pid, variant, item.quantity - 1);
+        renderCart();
+      });
+      row.querySelector('.remove-link').addEventListener('click', () => {
+        removeFromCart(pid, variant);
+        renderCart();
+      });
+    });
+
+    document.getElementById('checkoutForm').addEventListener('submit', handleCheckout);
+
+    // Apply the smooth spring-caret effect to every text field in the form
+    ['customerName', 'phone', 'address', 'notes'].forEach(id => {
+      initSmoothCaret(document.getElementById(id));
+    });
+  }
+
+  function handleCheckout(e) {
+    e.preventDefault();
+
+    const cart = getCart();
+    if (cart.length === 0) return;
+
+    const customerName = document.getElementById('customerName').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const notes = document.getElementById('notes').value.trim();
+    const total = getCartTotal();
+
+    const btn = document.getElementById('placeOrderBtn');
+    btn.disabled = true;
+    btn.textContent = 'Placing order…';
+
+    // Build a hidden form and submit it to a hidden iframe — this is a plain
+    // form POST (not fetch), so it isn't subject to CORS the way a fetch()
+    // response-read would be. We can't read back the result, so we just
+    // wait a moment and show the success screen, matching the same
+    // fire-and-forget pattern used elsewhere on Bellesogno's backend.
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = APPS_SCRIPT_URL;
+    form.target = 'hiddenFrame';
+    form.style.display = 'none';
+
+    const fields = {
+      customerName, phone, address, notes,
+      totalAmount: total,
+      itemsJson: JSON.stringify(cart)
+    };
+    Object.keys(fields).forEach(key => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = key;
+      input.value = fields[key];
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+
+    setTimeout(() => {
+      localStorage.removeItem(CART_KEY);
+      updateCartBadge();
+      showSuccess();
+    }, 1200);
+  }
+
+  function showSuccess() {
+    document.getElementById('pageContent').innerHTML = `
+      <div class="success-screen">
+        <h2>order placed</h2>
+        <p>Thank you — we've got your order and will reach out to confirm delivery. Pay in cash when it arrives at your door.</p>
+        <a href="shop.html" style="text-decoration:underline; font-size:13px;">Continue shopping →</a>
+      </div>
+    `;
+  }
+
+  renderCart();
+</script>
+
+</body>
+</html>
