@@ -175,12 +175,12 @@
     <div class="top-bar">
       <div class="monogram"><img src="logo.png" alt="Bellesogno" /></div>
       <div class="nav-pill">
-        <a href="#" class="active" id="navLink1">Shop</a>
+        <a href="shop.html" class="active" id="navLink1">Shop</a>
         <a href="#" id="navLink2">New Arrivals</a>
         <a href="#" id="navLink3">Fragrance</a>
         <a href="#" id="navLink4">About</a>
       </div>
-      <span class="cart-icon">🛍</span>
+      <span class="cart-icon" style="position:relative;">🛍<span class="cart-badge" id="cartBadge" style="display:none; position:absolute; top:-8px; right:-10px; background:#9e222c; color:#fff; font-size:10px; font-weight:700; width:18px; height:18px; border-radius:50%; align-items:center; justify-content:center;">0</span></span>
     </div>
     <div class="hero-tag" id="heroTagline">Cinematic pieces for people who notice detail.</div>
     <div class="hero-wordmark" id="brandName">bellesogno</div>
@@ -305,10 +305,21 @@
       });
   }
 
+  function updateCartBadge() {
+    const badge = document.getElementById('cartBadge');
+    if (!badge) return;
+    let cart = [];
+    try { cart = JSON.parse(localStorage.getItem('bellesogno_cart')) || []; } catch (_) {}
+    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+    badge.textContent = count;
+    badge.style.display = count > 0 ? 'flex' : 'none';
+  }
+
   applyConfig();
   renderProducts();
   loadData('getConfig', applyConfigData);
   loadData('getProducts', applyProductsData);
+  updateCartBadge();
 </script>
 
 </body>
