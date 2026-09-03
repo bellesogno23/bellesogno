@@ -20,10 +20,40 @@
     width: 42px; height: 42px; border-radius: 50%; overflow: hidden;
   }
   .monogram img { width: 100%; height: 100%; object-fit: cover; }
-  .nav-pill { display: flex; background: rgba(245,241,232,0.96); border-radius: 100px; padding: 6px; }
-  .nav-pill a { padding: 9px 20px; font-size: 13px; font-weight: 600; border-radius: 100px; }
-  .nav-pill a.active { background: #08090c; color: #f5f1e8; }
-  .nav-pill a:not(.active):hover { background: rgba(8,9,12,0.06); }
+  .nav-pill {
+    position: relative;
+    display: flex;
+    background: rgba(245,241,232,0.96);
+    border-radius: 100px;
+    padding: 6px;
+  }
+  .nav-pill-indicator {
+    position: absolute;
+    top: 6px; bottom: 6px; left: 6px;
+    border-radius: 100px;
+    transition: transform 0.35s cubic-bezier(0.65,0,0.35,1), width 0.35s cubic-bezier(0.65,0,0.35,1);
+    z-index: 0;
+    background: linear-gradient(115deg, #1a2530, #3d5a75, #08090c, #1a2530);
+    background-size: 300% 300%;
+    animation: holoShift 6s ease infinite;
+    box-shadow: 0 2px 10px rgba(61,90,117,0.4);
+  }
+  @keyframes holoShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .nav-pill a {
+    position: relative;
+    z-index: 1;
+    padding: 9px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 100px;
+    color: #08090c;
+    transition: color 0.25s ease;
+  }
+  .nav-pill a.text-light { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
   .cart-link { position: absolute; right: 30px; top: 50%; transform: translateY(-50%); color: #f5f1e8; font-size: 20px; }
   .cart-badge {
     display: none; position: absolute; top: -8px; right: -10px;
@@ -31,15 +61,19 @@
     width: 18px; height: 18px; border-radius: 50%; align-items: center; justify-content: center;
   }
 
-  .page-header { padding: 50px 30px 10px; text-align: center; }
+  .page-header { padding: 50px 30px 6px; text-align: center; }
   .page-header h1 {
     font-family: 'Anton', sans-serif; font-size: clamp(28px, 6vw, 44px);
     text-transform: lowercase; letter-spacing: -0.5px;
   }
+  .continue-shopping {
+    text-align: center; font-size: 12px; color: #6b6558; text-decoration: underline;
+    display: block; margin-bottom: 20px;
+  }
 
   .cart-layout {
     max-width: 900px; margin: 0 auto;
-    padding: 40px 30px 80px;
+    padding: 10px 30px 80px;
     display: grid; grid-template-columns: 1.3fr 1fr; gap: 50px;
   }
   @media (max-width: 720px) { .cart-layout { grid-template-columns: 1fr; } }
@@ -64,15 +98,53 @@
   }
   .qty-value { font-size: 13px; font-weight: 600; min-width: 16px; text-align: center; }
   .cart-item-price { font-size: 14px; font-weight: 700; text-align: right; white-space: nowrap; }
-  .remove-link { font-size: 11px; color: #9e222c; text-decoration: underline; cursor: pointer; margin-top: 6px; display: inline-block; }
+  .cart-item-links { display: flex; gap: 12px; margin-top: 6px; }
+  .remove-link, .change-size-link { font-size: 11px; color: #9e222c; text-decoration: underline; cursor: pointer; }
+  .change-size-link { color: #3d5a75; }
 
-  .empty-cart { text-align: center; padding: 60px 20px; color: #6b6558; }
+  .variant-swap-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .variant-swap-btn {
+    padding: 5px 12px; font-size: 11px; font-weight: 600;
+    border: 1px solid rgba(8,9,12,0.25); border-radius: 4px; background: #fff; cursor: pointer;
+  }
+  .variant-swap-btn.current { background: #08090c; color: #fff; border-color: #08090c; }
+  .variant-swap-btn.out-of-stock { opacity: 0.35; cursor: not-allowed; text-decoration: line-through; }
+
+  .empty-cart { text-align: center; padding: 40px 20px 20px; color: #6b6558; grid-column: 1 / -1; }
   .empty-cart a { text-decoration: underline; color: #08090c; }
+  .empty-cart-products {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px; max-width: 560px; margin: 30px auto 0; text-align: left;
+  }
+  .empty-cart-products .mini-card { cursor: pointer; }
+  .empty-cart-products .mini-swatch {
+    aspect-ratio: 3/4; border-radius: 2px; margin-bottom: 8px;
+    background: linear-gradient(160deg, #3d5a75, #1a2530);
+  }
+  .empty-cart-products .mini-swatch.perfume { background: linear-gradient(160deg, #5a4a3d, #2a2018); }
+  .empty-cart-products .mini-name { font-size: 12px; font-weight: 600; }
+  .empty-cart-products .mini-price { font-size: 12px; color: #6b6558; }
+
+  .cross-sell { margin-top: 30px; padding-top: 24px; border-top: 1px dashed rgba(8,9,12,0.15); }
+  .cross-sell h3 { font-size: 13px; font-weight: 700; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 1px; color: #6b6558; }
+  .cross-sell-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .cross-sell-card { cursor: pointer; }
+  .cross-sell-swatch {
+    aspect-ratio: 3/4; border-radius: 2px; margin-bottom: 6px;
+    background: linear-gradient(160deg, #3d5a75, #1a2530);
+  }
+  .cross-sell-swatch.perfume { background: linear-gradient(160deg, #5a4a3d, #2a2018); }
+  .cross-sell-name { font-size: 11px; font-weight: 600; }
+  .cross-sell-price { font-size: 11px; color: #6b6558; }
+  .cross-sell-add {
+    font-size: 10px; color: #3d5a75; text-decoration: underline; margin-top: 3px; display: inline-block;
+  }
 
   .cart-total-row {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 20px 0 0; font-size: 16px; font-weight: 700;
+    padding: 6px 0; font-size: 14px;
   }
+  .cart-total-row.grand { font-size: 16px; font-weight: 700; padding-top: 14px; border-top: 1px solid rgba(8,9,12,0.15); margin-top: 8px; }
 
   /* ── Checkout form ── */
   .checkout-panel {
@@ -86,7 +158,7 @@
     font-family: 'Anton', sans-serif; font-size: 20px;
     text-transform: lowercase; margin-bottom: 18px;
   }
-  .field { margin-bottom: 16px; }
+  .field { margin-bottom: 16px; position: relative; }
   .field label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; }
   .field input, .field textarea {
     width: 100%; padding: 11px 12px;
@@ -95,18 +167,33 @@
     background: #fff;
   }
   .field textarea { resize: vertical; min-height: 60px; }
+  .field-error { font-size: 11px; color: #9e222c; margin-top: 4px; display: none; }
+  .field-error.show { display: block; }
+
   .cod-note {
     font-size: 12px; color: #4a463f; line-height: 1.5;
     background: rgba(158,34,44,0.06); border: 1px solid rgba(158,34,44,0.2);
     padding: 10px 12px; border-radius: 6px; margin-bottom: 18px;
   }
+  .delivery-estimate {
+    font-size: 12px; color: #6b6558; margin-bottom: 14px;
+  }
+  .cod-checkbox-row {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 12px; color: #4a463f; margin-bottom: 18px; line-height: 1.5;
+  }
+  .cod-checkbox-row input { margin-top: 2px; }
+
   .place-order-btn {
     display: block; width: 100%; padding: 15px;
     background: #08090c; color: #f5f1e8; border: none; border-radius: 6px;
     font-size: 14px; font-weight: 700; letter-spacing: 1px; cursor: pointer;
   }
   .place-order-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-  .field-error { font-size: 11px; color: #9e222c; margin-top: 4px; display: none; }
+  .stock-error {
+    font-size: 12px; color: #9e222c; margin-top: 10px; display: none; line-height: 1.5;
+  }
+  .stock-error.show { display: block; }
 
   /* ── Smooth caret (see smooth-caret.js) ── */
   .smooth-caret-mirror {
@@ -124,42 +211,31 @@
   @keyframes caretBlink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
 
   /* ── Success state ── */
-  .success-screen { text-align: center; padding: 100px 30px; }
+  .success-screen { text-align: center; padding: 70px 30px; max-width: 480px; margin: 0 auto; }
   .success-screen h2 { font-family: 'Anton', sans-serif; font-size: 32px; text-transform: lowercase; margin-bottom: 14px; }
   .success-screen p { font-size: 14px; color: #4a463f; max-width: 380px; margin: 0 auto 24px; line-height: 1.6; }
-  .order-id-chip {
-    display: inline-block; font-size: 13px; font-weight: 700;
-    background: rgba(8,9,12,0.06); padding: 8px 18px; border-radius: 100px; margin-bottom: 24px;
+  .order-recap {
+    background: rgba(8,9,12,0.03); border: 1px solid rgba(8,9,12,0.1);
+    border-radius: 8px; padding: 20px; text-align: left; margin-bottom: 24px;
   }
-
-  /* ── Smooth spring-animated caret (replaces the native blinking cursor
-     on every text field in the checkout form) ── */
-  .field { position: relative; }
-  .smooth-caret {
-    position: absolute;
-    width: 2px;
-    background: #08090c;
-    top: 0; left: 0;
-    pointer-events: none;
-    transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
-    opacity: 0;
+  .order-recap-item { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; }
+  .order-recap-item span:first-child { color: #4a463f; }
+  .order-recap-total { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; padding-top: 10px; margin-top: 6px; border-top: 1px solid rgba(8,9,12,0.12); }
+  .order-recap-address { font-size: 12px; color: #6b6558; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(8,9,12,0.1); }
+  .success-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .whatsapp-recap-btn {
+    display: inline-block; padding: 12px 24px; border-radius: 100px;
+    background: #08090c; color: #fff; font-size: 13px; font-weight: 600;
   }
-  .smooth-caret.blink { animation: caretBlink 1s step-end infinite; }
-  @keyframes caretBlink { 50% { opacity: 0; } }
-  .smooth-mirror {
-    position: absolute; top: 0; left: 0;
-    visibility: hidden;
-    pointer-events: none;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
+  .continue-link { display: inline-block; padding: 12px 24px; font-size: 13px; text-decoration: underline; }
 </style>
 </head>
 <body>
 
   <div class="top-bar">
     <a href="index.html" class="monogram"><img src="logo.png" alt="Bellesogno" /></a>
-    <div class="nav-pill">
+    <div class="nav-pill" id="navPill">
+      <div class="nav-pill-indicator" id="navIndicator"></div>
       <a href="shop.html">Shop</a>
       <a href="clothes.html">Clothes</a>
       <a href="fragrance.html">Fragrance</a>
@@ -170,6 +246,7 @@
 
   <div id="pageContent">
     <div class="page-header"><h1>your cart</h1></div>
+    <a href="shop.html" class="continue-shopping">← Continue shopping</a>
     <div class="cart-layout" id="cartLayout"></div>
   </div>
 
@@ -181,84 +258,89 @@
 <script src="shop-common.js"></script>
 <script src="smooth-caret.js"></script>
 <script>
-  function initSmoothCaret(input) {
-  const wrap = input.parentElement;
-  const caret = document.createElement('div');
-  caret.className = 'smooth-caret';
-  wrap.appendChild(caret);
+  // ── Sliding nav pill indicator ──
+  (function initNavSlide() {
+    const pill = document.getElementById('navPill');
+    const indicator = document.getElementById('navIndicator');
+    if (!pill || !indicator) return;
+    const links = Array.from(pill.querySelectorAll('a'));
+    const activeLink = pill.querySelector('a.active') || links[0];
+    if (!activeLink) return;
 
-  const mirror = document.createElement('div');
-  mirror.className = 'smooth-mirror';
-  wrap.appendChild(mirror);
+    function moveIndicatorTo(link) {
+      indicator.style.transform = `translateX(${link.offsetLeft - 6}px)`;
+      indicator.style.width = `${link.offsetWidth}px`;
+      links.forEach(l => l.classList.remove('text-light'));
+      link.classList.add('text-light');
+    }
 
-  const isTextarea = input.tagName === 'TEXTAREA';
-  let blinkTimeout = null;
+    links.forEach(link => {
+      link.addEventListener('mouseenter', () => moveIndicatorTo(link));
+    });
+    pill.addEventListener('mouseleave', () => moveIndicatorTo(activeLink));
 
-  function syncMirrorStyle() {
-    const cs = getComputedStyle(input);
-    ['fontFamily','fontSize','fontWeight','letterSpacing','lineHeight',
-     'paddingTop','paddingRight','paddingBottom','paddingLeft',
-     'borderTopWidth','borderRightWidth','borderBottomWidth','borderLeftWidth',
-     'boxSizing'].forEach(prop => { mirror.style[prop] = cs[prop]; });
-    // Align the mirror with the INPUT's actual position within the wrapper
-    // (the wrapper also contains the <label>, so this can't be assumed 0,0).
-    mirror.style.left = input.offsetLeft + 'px';
-    mirror.style.top = input.offsetTop + 'px';
-    mirror.style.width = input.offsetWidth + 'px';
-    mirror.style.whiteSpace = isTextarea ? 'pre-wrap' : 'pre';
-    caret.style.height = cs.fontSize;
+    indicator.style.transition = 'none';
+    moveIndicatorTo(activeLink);
+    requestAnimationFrame(() => { indicator.style.transition = ''; });
+  })();
+
+  // ════════════════════════════════════════════════════════════════════
+  // State
+  // ════════════════════════════════════════════════════════════════════
+  let ALL_PRODUCTS = [];
+  let SITE_CONFIG = { deliveryFee: 0, whatsapp: '' };
+  let openVariantSwapKey = null; // "productID|variantLabel" of the row currently showing its swap picker
+  const CUSTOMER_INFO_KEY = 'bellesogno_customer_info';
+
+  function getDeliveryFee() {
+    return Number(SITE_CONFIG.deliveryFee) || 0;
   }
 
-  function updateCaret() {
-    const pos = input.selectionStart;
-    const before = input.value.slice(0, pos);
-    mirror.textContent = before;
-    const marker = document.createElement('span');
-    marker.textContent = '\u200b';
-    mirror.appendChild(marker);
-
-    const markerRect = marker.getBoundingClientRect();
-    const wrapRect = wrap.getBoundingClientRect();
-    const x = markerRect.left - wrapRect.left;
-    const y = markerRect.top - wrapRect.top + (parseFloat(getComputedStyle(input).fontSize) * 0.1);
-
-    caret.style.transform = `translate(${x}px, ${y}px)`;
+  function findProduct(productID) {
+    return ALL_PRODUCTS.find(p => p.productID === productID);
   }
 
-  function pauseBlink() {
-    caret.classList.remove('blink');
-    clearTimeout(blinkTimeout);
-    blinkTimeout = setTimeout(() => caret.classList.add('blink'), 400);
-  }
-
-  // Only hide the native cursor once our custom one is actually ready —
-  // if anything above fails, the field still works normally.
-  input.style.caretColor = 'transparent';
-  syncMirrorStyle();
-
-  input.addEventListener('input', () => { updateCaret(); pauseBlink(); });
-  input.addEventListener('click', () => { updateCaret(); pauseBlink(); });
-  input.addEventListener('keyup', () => { updateCaret(); pauseBlink(); });
-  input.addEventListener('focus', () => { caret.style.opacity = '1'; updateCaret(); pauseBlink(); });
-  input.addEventListener('blur', () => { caret.style.opacity = '0'; caret.classList.remove('blink'); });
-  window.addEventListener('resize', () => { syncMirrorStyle(); updateCaret(); });
-}
-
-function renderCart() {
+  // ════════════════════════════════════════════════════════════════════
+  // Render the cart + checkout panel
+  // ════════════════════════════════════════════════════════════════════
+  function renderCart() {
     const cart = getCart();
     const layout = document.getElementById('cartLayout');
 
     if (cart.length === 0) {
+      const featured = ALL_PRODUCTS.filter(p => p.featured).slice(0, 3);
+      const productsToShow = featured.length > 0 ? featured : ALL_PRODUCTS.slice(0, 3);
+
       layout.innerHTML = `
-        <div class="empty-cart" style="grid-column: 1 / -1;">
-          Your cart is empty. <a href="shop.html">Browse the shop →</a>
+        <div class="empty-cart">
+          Your cart is empty.
+          ${productsToShow.length > 0 ? `
+            <div class="empty-cart-products">
+              ${productsToShow.map(p => `
+                <div class="mini-card" data-id="${p.productID}">
+                  <div class="mini-swatch ${p.category === 'Perfume' ? 'perfume' : ''}"></div>
+                  <div class="mini-name">${p.name}</div>
+                  <div class="mini-price">${formatPrice(p.basePrice)}</div>
+                </div>
+              `).join('')}
+            </div>
+          ` : `<a href="shop.html">Browse the shop →</a>`}
         </div>
       `;
+      layout.querySelectorAll('.mini-card').forEach(card => {
+        card.addEventListener('click', () => {
+          window.location.href = 'product.html?id=' + card.dataset.id;
+        });
+      });
       return;
     }
 
     const itemsHtml = cart.map(item => {
-      const swatchClass = item.productID && item.productID.startsWith('P00') ? 'cart-item-swatch' : 'cart-item-swatch';
+      const swapKey = item.productID + '|' + (item.variantLabel || '');
+      const product = findProduct(item.productID);
+      const swatchClass = product && product.category === 'Perfume' ? 'cart-item-swatch perfume' : 'cart-item-swatch';
+      const showSwapPicker = openVariantSwapKey === swapKey && product && product.variants && product.variants.length > 0;
+
       return `
         <div class="cart-item" data-pid="${item.productID}" data-variant="${item.variantLabel || ''}">
           <div class="${swatchClass}"></div>
@@ -270,46 +352,94 @@ function renderCart() {
               <span class="qty-value">${item.quantity}</span>
               <button class="qty-btn qty-plus">+</button>
             </div>
-            <a class="remove-link">Remove</a>
+            <div class="cart-item-links">
+              <a class="remove-link">Remove</a>
+              ${product && product.variants && product.variants.length > 0 ? `<a class="change-size-link">Change size</a>` : ''}
+            </div>
+            ${showSwapPicker ? `
+              <div class="variant-swap-row">
+                ${product.variants.map(v => {
+                  const isCurrent = v.variantLabel === item.variantLabel;
+                  const outOfStock = v.stock <= 0;
+                  return `<button type="button" class="variant-swap-btn ${isCurrent ? 'current' : ''} ${outOfStock ? 'out-of-stock' : ''}"
+                            data-swap-label="${v.variantLabel}" ${outOfStock ? 'disabled' : ''}>${v.variantLabel}</button>`;
+                }).join('')}
+              </div>
+            ` : ''}
           </div>
           <div class="cart-item-price">${formatPrice(item.price * item.quantity)}</div>
         </div>
       `;
     }).join('');
 
-    const total = getCartTotal();
+    const subtotal = getCartTotal();
+    const deliveryFee = getDeliveryFee();
+    const grandTotal = subtotal + deliveryFee;
+
+    // Cross-sell: up to 3 products not already in the cart
+    const cartProductIDs = new Set(cart.map(c => c.productID));
+    const crossSellProducts = ALL_PRODUCTS.filter(p => !cartProductIDs.has(p.productID)).slice(0, 3);
+
+    const savedInfo = getSavedCustomerInfo();
 
     layout.innerHTML = `
       <div>
         ${itemsHtml}
-        <div class="cart-total-row"><span>Total</span><span>${formatPrice(total)}</span></div>
+        ${crossSellProducts.length > 0 ? `
+          <div class="cross-sell">
+            <h3>You might also like</h3>
+            <div class="cross-sell-grid">
+              ${crossSellProducts.map(p => `
+                <div class="cross-sell-card" data-id="${p.productID}">
+                  <div class="cross-sell-swatch ${p.category === 'Perfume' ? 'perfume' : ''}"></div>
+                  <div class="cross-sell-name">${p.name}</div>
+                  <div class="cross-sell-price">${formatPrice(p.basePrice)}</div>
+                  <a class="cross-sell-add" data-add-id="${p.productID}">+ Add</a>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
       </div>
       <div class="checkout-panel">
         <h2>checkout details</h2>
         <div class="cod-note">Cash on delivery — pay when your order arrives at your door. No online payment needed.</div>
-        <form id="checkoutForm">
+
+        <div class="cart-total-row"><span>Subtotal</span><span>${formatPrice(subtotal)}</span></div>
+        ${deliveryFee > 0 ? `<div class="cart-total-row"><span>Delivery</span><span>${formatPrice(deliveryFee)}</span></div>` : ''}
+        <div class="cart-total-row grand"><span>Total</span><span>${formatPrice(grandTotal)}</span></div>
+
+        <div class="delivery-estimate" style="margin-top:14px;">Expect delivery within 3–5 business days.</div>
+
+        <form id="checkoutForm" style="margin-top:16px;">
           <div class="field">
             <label for="customerName">Full name</label>
-            <input type="text" id="customerName" required />
+            <input type="text" id="customerName" value="${savedInfo.customerName || ''}" required />
           </div>
           <div class="field">
             <label for="phone">Phone number</label>
-            <input type="text" id="phone" placeholder="01XXXXXXXXX" required />
+            <input type="text" id="phone" placeholder="01XXXXXXXXX" value="${savedInfo.phone || ''}" required />
+            <div class="field-error" id="phoneError">Enter a valid phone number (e.g. 01712345678).</div>
           </div>
           <div class="field">
             <label for="address">Delivery address</label>
-            <textarea id="address" required></textarea>
+            <textarea id="address" required>${savedInfo.address || ''}</textarea>
           </div>
           <div class="field">
             <label for="notes">Notes <span style="font-weight:400;opacity:0.6;">(optional)</span></label>
             <textarea id="notes"></textarea>
           </div>
-          <button type="submit" class="place-order-btn" id="placeOrderBtn">Place Order — ${formatPrice(total)}</button>
+          <label class="cod-checkbox-row">
+            <input type="checkbox" id="codConfirm" required />
+            <span>I understand this is Cash on Delivery — I'll pay ${formatPrice(grandTotal)} in cash when my order arrives.</span>
+          </label>
+          <button type="submit" class="place-order-btn" id="placeOrderBtn">Place Order — ${formatPrice(grandTotal)}</button>
+          <div class="stock-error" id="stockError"></div>
         </form>
       </div>
     `;
 
-    // Wire up quantity/remove controls per item
+    // Quantity / remove / change-size controls per item
     layout.querySelectorAll('.cart-item').forEach(row => {
       const pid = row.dataset.pid;
       const variant = row.dataset.variant || null;
@@ -327,14 +457,81 @@ function renderCart() {
         removeFromCart(pid, variant);
         renderCart();
       });
+
+      const changeLink = row.querySelector('.change-size-link');
+      if (changeLink) {
+        changeLink.addEventListener('click', () => {
+          const key = pid + '|' + (variant || '');
+          openVariantSwapKey = openVariantSwapKey === key ? null : key;
+          renderCart();
+        });
+      }
+
+      row.querySelectorAll('.variant-swap-btn:not(.out-of-stock)').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const newLabel = btn.dataset.swapLabel;
+          if (newLabel === variant) return;
+          const product = findProduct(pid);
+          const newVariant = product.variants.find(v => v.variantLabel === newLabel);
+          removeFromCart(pid, variant);
+          addToCart({
+            productID: pid,
+            name: item.name,
+            variantLabel: newLabel,
+            price: newVariant.price,
+            quantity: item.quantity
+          });
+          openVariantSwapKey = null;
+          renderCart();
+        });
+      });
+    });
+
+    // Cross-sell quick-add
+    layout.querySelectorAll('[data-add-id]').forEach(link => {
+      link.addEventListener('click', () => {
+        const product = findProduct(link.dataset.addId);
+        if (!product) return;
+        const variant = (product.variants && product.variants.length > 0) ? product.variants[0] : null;
+        addToCart({
+          productID: product.productID,
+          name: product.name,
+          variantLabel: variant ? variant.variantLabel : null,
+          price: variant ? variant.price : product.basePrice,
+          quantity: 1
+        });
+        renderCart();
+      });
     });
 
     document.getElementById('checkoutForm').addEventListener('submit', handleCheckout);
 
-    // Apply the smooth spring-caret effect to every text field in the form
+    // Smooth caret on every text field
     ['customerName', 'phone', 'address', 'notes'].forEach(id => {
       initSmoothCaret(document.getElementById(id));
     });
+  }
+
+  // ════════════════════════════════════════════════════════════════════
+  // Remembering customer details (browser-only, not the Sheet)
+  // ════════════════════════════════════════════════════════════════════
+  function getSavedCustomerInfo() {
+    try {
+      return JSON.parse(localStorage.getItem(CUSTOMER_INFO_KEY)) || {};
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function saveCustomerInfo(info) {
+    localStorage.setItem(CUSTOMER_INFO_KEY, JSON.stringify(info));
+  }
+
+  // ════════════════════════════════════════════════════════════════════
+  // Checkout submission
+  // ════════════════════════════════════════════════════════════════════
+  function validatePhone(phone) {
+    return /^01[0-9]{9}$/.test(phone.replace(/[\s-]/g, ''));
   }
 
   function handleCheckout(e) {
@@ -347,17 +544,60 @@ function renderCart() {
     const phone = document.getElementById('phone').value.trim();
     const address = document.getElementById('address').value.trim();
     const notes = document.getElementById('notes').value.trim();
-    const total = getCartTotal();
+    const phoneError = document.getElementById('phoneError');
+    const stockError = document.getElementById('stockError');
+    stockError.classList.remove('show');
+
+    if (!validatePhone(phone)) {
+      phoneError.classList.add('show');
+      document.getElementById('phone').focus();
+      return;
+    }
+    phoneError.classList.remove('show');
 
     const btn = document.getElementById('placeOrderBtn');
     btn.disabled = true;
+    btn.textContent = 'Checking stock…';
+
+    // Live stock re-check — re-fetch products fresh (not the possibly-stale
+    // ALL_PRODUCTS from page load) so we don't accept an order for a variant
+    // that sold out while the customer was browsing.
+    fetchProducts((freshProducts) => {
+      const shortages = [];
+      cart.forEach(item => {
+        const product = freshProducts.find(p => p.productID === item.productID);
+        if (!product) { shortages.push(`${item.name} is no longer available.`); return; }
+        if (item.variantLabel) {
+          const variant = (product.variants || []).find(v => v.variantLabel === item.variantLabel);
+          if (!variant || variant.stock < item.quantity) {
+            shortages.push(`${item.name} (${item.variantLabel}) — only ${variant ? variant.stock : 0} left in stock.`);
+          }
+        }
+      });
+
+      if (shortages.length > 0) {
+        stockError.innerHTML = shortages.join('<br>') + '<br>Please adjust your cart and try again.';
+        stockError.classList.add('show');
+        btn.disabled = false;
+        btn.textContent = `Place Order — ${formatPrice(getCartTotal() + getDeliveryFee())}`;
+        return;
+      }
+
+      submitOrder(customerName, phone, address, notes, cart);
+    });
+  }
+
+  function submitOrder(customerName, phone, address, notes, cart) {
+    const btn = document.getElementById('placeOrderBtn');
     btn.textContent = 'Placing order…';
 
-    // Build a hidden form and submit it to a hidden iframe — this is a plain
-    // form POST (not fetch), so it isn't subject to CORS the way a fetch()
-    // response-read would be. We can't read back the result, so we just
-    // wait a moment and show the success screen, matching the same
-    // fire-and-forget pattern used elsewhere on Bellesogno's backend.
+    const total = getCartTotal() + getDeliveryFee();
+
+    saveCustomerInfo({ customerName, phone, address });
+
+    // Build a hidden form and submit it to a hidden iframe — a plain form
+    // POST isn't subject to CORS the way a fetch() response-read would be.
+    // We can't read back the result, so we wait a moment and show success.
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = APPS_SCRIPT_URL;
@@ -380,22 +620,67 @@ function renderCart() {
     document.body.appendChild(form);
     form.submit();
 
+    const recap = { items: cart, address, total, subtotal: getCartTotal(), deliveryFee: getDeliveryFee() };
+
     setTimeout(() => {
       localStorage.removeItem(CART_KEY);
       updateCartBadge();
-      showSuccess();
+      showSuccess(recap);
     }, 1200);
   }
 
-  function showSuccess() {
+  function showSuccess(recap) {
+    const itemsHtml = recap.items.map(item => `
+      <div class="order-recap-item">
+        <span>${item.name}${item.variantLabel ? ' (' + item.variantLabel + ')' : ''} × ${item.quantity}</span>
+        <span>${formatPrice(item.price * item.quantity)}</span>
+      </div>
+    `).join('');
+
+    const whatsappMsg = encodeURIComponent(
+      `Hi! I just placed an order on Bellesogno:\n\n` +
+      recap.items.map(i => `${i.name}${i.variantLabel ? ' (' + i.variantLabel + ')' : ''} × ${i.quantity}`).join('\n') +
+      `\n\nTotal: ${formatPrice(recap.total)}\nDelivery to: ${recap.address}`
+    );
+    const whatsappDigits = String(SITE_CONFIG.whatsapp || '').replace(/[^0-9]/g, '');
+    const whatsappHref = whatsappDigits ? `https://wa.me/${whatsappDigits}?text=${whatsappMsg}` : '#';
+
     document.getElementById('pageContent').innerHTML = `
       <div class="success-screen">
         <h2>order placed</h2>
         <p>Thank you — we've got your order and will reach out to confirm delivery. Pay in cash when it arrives at your door.</p>
-        <a href="shop.html" style="text-decoration:underline; font-size:13px;">Continue shopping →</a>
+        <div class="order-recap">
+          ${itemsHtml}
+          ${recap.deliveryFee > 0 ? `<div class="order-recap-item"><span>Delivery</span><span>${formatPrice(recap.deliveryFee)}</span></div>` : ''}
+          <div class="order-recap-total"><span>Total</span><span>${formatPrice(recap.total)}</span></div>
+          <div class="order-recap-address">Delivering to: ${recap.address}</div>
+        </div>
+        <div class="success-actions">
+          ${whatsappDigits ? `<a href="${whatsappHref}" target="_blank" rel="noopener" class="whatsapp-recap-btn">Send confirmation on WhatsApp</a>` : ''}
+          <a href="shop.html" class="continue-link">Continue shopping →</a>
+        </div>
       </div>
     `;
   }
+
+  // ════════════════════════════════════════════════════════════════════
+  // Load products + config, then render
+  // ════════════════════════════════════════════════════════════════════
+  fetchProducts((products) => {
+    ALL_PRODUCTS = products;
+    renderCart();
+  });
+
+  fetch(APPS_SCRIPT_URL + '?action=getConfig')
+    .then(r => r.json())
+    .then(data => {
+      if (data && data.status === 'ok' && data.data) {
+        SITE_CONFIG.deliveryFee = data.data.deliveryFee || 0;
+        SITE_CONFIG.whatsapp = data.data.whatsapp || '';
+        renderCart();
+      }
+    })
+    .catch(() => console.warn('[Config] Could not load delivery fee / WhatsApp number.'));
 
   renderCart();
 </script>
