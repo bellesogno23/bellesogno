@@ -324,7 +324,7 @@
 
     grid.innerHTML = visible.map(p => {
       const swatchClass = p.category === 'Perfume' ? 'product-swatch perfume' : 'product-swatch';
-      const media = p.images ? `<img src="${p.images}" alt="${p.name}" />` : '';
+      const media = p.images ? `<img src="${p.images}" alt="${p.name}" onerror="this.style.display='none'" />` : '';
       return `
         <div class="product-card" data-id="${p.productID}">
           <div class="${swatchClass}">
@@ -352,7 +352,7 @@
 
     const imgEl = document.getElementById('modalImage');
     imgEl.className = product.category === 'Perfume' ? 'modal-image perfume' : 'modal-image';
-    imgEl.innerHTML = product.images ? `<img src="${product.images}" alt="${product.name}" />` : '';
+    imgEl.innerHTML = product.images ? `<img src="${product.images}" alt="${product.name}" onerror="this.style.display='none'" />` : '';
 
     document.getElementById('modalCategory').textContent = product.category;
     document.getElementById('modalName').textContent = product.name;
