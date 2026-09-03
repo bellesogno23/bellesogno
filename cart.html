@@ -116,7 +116,8 @@
     display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 16px; max-width: 560px; margin: 30px auto 0; text-align: left;
   }
-  .empty-cart-products .mini-card { cursor: pointer; }
+  .empty-cart-products .mini-card { cursor: pointer; transition: transform 0.25s ease; }
+  .empty-cart-products .mini-card:hover { transform: translateY(-4px); }
   .empty-cart-products .mini-swatch {
     aspect-ratio: 3/4; border-radius: 2px; margin-bottom: 8px;
     background: linear-gradient(160deg, #3d5a75, #1a2530);
@@ -128,7 +129,8 @@
   .cross-sell { margin-top: 30px; padding-top: 24px; border-top: 1px dashed rgba(8,9,12,0.15); }
   .cross-sell h3 { font-size: 13px; font-weight: 700; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 1px; color: #6b6558; }
   .cross-sell-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .cross-sell-card { cursor: pointer; }
+  .cross-sell-card { cursor: pointer; transition: transform 0.25s ease; }
+  .cross-sell-card:hover { transform: translateY(-4px); }
   .cross-sell-swatch {
     aspect-ratio: 3/4; border-radius: 2px; margin-bottom: 6px;
     background: linear-gradient(160deg, #3d5a75, #1a2530);
@@ -228,6 +230,51 @@
     background: #08090c; color: #fff; font-size: 13px; font-weight: 600;
   }
   .continue-link { display: inline-block; padding: 12px 24px; font-size: 13px; text-decoration: underline; }
+
+  /* ── Scroll reveal ── */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── Cart badge pop ── */
+  .cart-badge.pop { animation: badgePop 0.35s ease; }
+  @keyframes badgePop { 0% { transform: scale(1); } 45% { transform: scale(1.45); } 100% { transform: scale(1); } }
+
+  /* ── Button micro-interactions (site-wide) ── */
+  button, a.social-follow-btn, a.whatsapp-btn, a.whatsapp-recap-btn, a.place-order-btn, a.add-to-cart-btn {
+    transition: transform 0.15s ease;
+  }
+  button:active, a.social-follow-btn:active, a.whatsapp-btn:active, a.whatsapp-recap-btn:active,
+  a.place-order-btn:active, a.add-to-cart-btn:active {
+    transform: scale(0.96);
+  }
+
+  /* ── Mobile nav (hamburger + full-screen overlay) ── */
+  .hamburger-btn {
+    display: none;
+    background: none; border: none; color: #f5f1e8;
+    font-size: 22px; cursor: pointer; z-index: 5;
+  }
+  .mobile-nav-overlay {
+    display: none;
+    position: fixed; inset: 0; background: #08090c; z-index: 200;
+    flex-direction: column; align-items: center; justify-content: center; gap: 26px;
+    opacity: 0; transition: opacity 0.25s ease;
+  }
+  .mobile-nav-overlay.open { display: flex; opacity: 1; }
+  .mobile-nav-overlay a {
+    color: rgba(245,241,232,0.7); font-size: 22px; font-weight: 600;
+    font-family: 'Work Sans', sans-serif;
+  }
+  .mobile-nav-overlay a.active { color: #f5f1e8; }
+  .mobile-nav-close {
+    position: absolute; top: 26px; right: 26px;
+    background: none; border: none; color: #f5f1e8; font-size: 28px; cursor: pointer;
+  }
+
+  @media (max-width: 640px) {
+    .nav-pill { display: none; }
+    .hamburger-btn { display: block; }
+  }
 </style>
 </head>
 <body>
@@ -241,6 +288,15 @@
       <a href="fragrance.html">Fragrance</a>
       <a href="about.html">About</a>
     </div>
+    <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+    <div class="mobile-nav-overlay" id="mobileNavOverlay">
+      <button class="mobile-nav-close" id="mobileNavClose">✕</button>
+      <a href="shop.html">Shop</a>
+      <a href="clothes.html">Clothes</a>
+      <a href="fragrance.html">Fragrance</a>
+      <a href="about.html">About</a>
+    </div>
+
     <a href="cart.html" class="cart-link active">🛍<span class="cart-badge" id="cartBadge">0</span></a>
   </div>
 
@@ -256,6 +312,7 @@
   <iframe name="hiddenFrame" style="display:none;"></iframe>
 
 <script src="shop-common.js"></script>
+<script src="scroll-reveal.js"></script>
 <script src="smooth-caret.js"></script>
 <script>
   // ── Sliding nav pill indicator ──
@@ -282,6 +339,16 @@
     indicator.style.transition = 'none';
     moveIndicatorTo(activeLink);
     requestAnimationFrame(() => { indicator.style.transition = ''; });
+  })();
+
+  // ── Mobile nav overlay ──
+  (function initMobileNav() {
+    const btn = document.getElementById('hamburgerBtn');
+    const overlay = document.getElementById('mobileNavOverlay');
+    const closeBtn = document.getElementById('mobileNavClose');
+    if (!btn || !overlay) return;
+    btn.addEventListener('click', () => overlay.classList.add('open'));
+    closeBtn.addEventListener('click', () => overlay.classList.remove('open'));
   })();
 
   // ════════════════════════════════════════════════════════════════════
@@ -317,7 +384,7 @@
           ${productsToShow.length > 0 ? `
             <div class="empty-cart-products">
               ${productsToShow.map(p => `
-                <div class="mini-card" data-id="${p.productID}">
+                <div class="mini-card reveal" data-id="${p.productID}">
                   <div class="mini-swatch ${p.category === 'Perfume' ? 'perfume' : ''}"></div>
                   <div class="mini-name">${p.name}</div>
                   <div class="mini-price">${formatPrice(p.basePrice)}</div>
@@ -332,6 +399,7 @@
           window.location.href = 'product.html?id=' + card.dataset.id;
         });
       });
+      initScrollReveal();
       return;
     }
 
@@ -390,7 +458,7 @@
             <h3>You might also like</h3>
             <div class="cross-sell-grid">
               ${crossSellProducts.map(p => `
-                <div class="cross-sell-card" data-id="${p.productID}">
+                <div class="cross-sell-card reveal" data-id="${p.productID}">
                   <div class="cross-sell-swatch ${p.category === 'Perfume' ? 'perfume' : ''}"></div>
                   <div class="cross-sell-name">${p.name}</div>
                   <div class="cross-sell-price">${formatPrice(p.basePrice)}</div>
@@ -510,6 +578,7 @@
     ['customerName', 'phone', 'address', 'notes'].forEach(id => {
       initSmoothCaret(document.getElementById(id));
     });
+    initScrollReveal();
   }
 
   // ════════════════════════════════════════════════════════════════════
