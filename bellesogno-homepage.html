@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bellesogno — Clothing & Fragrance</title>
+<meta name="description" content="Clothing and fragrance for people who notice detail. Cash on delivery, delivered across Bangladesh." />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Work Sans', sans-serif;
+    background: #f5f1e8;
+    color: #08090c;
+  }
+
+  a { text-decoration: none; color: inherit; }
+
+  /* ── NAV ── */
+  .top-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    z-index: 10;
+    padding: 26px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .monogram {
+    position: absolute;
+    left: 30px; top: 22px;
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+  }
+  .monogram img { width: 100%; height: 100%; object-fit: cover; }
+
+  .nav-pill {
+    display: flex;
+    background: rgba(245,241,232,0.96);
+    border-radius: 100px;
+    padding: 6px;
+  }
+  .nav-pill a {
+    padding: 9px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 100px;
+    transition: background 0.2s;
+  }
+  .nav-pill a.active { background: #08090c; color: #f5f1e8; }
+  .nav-pill a:not(.active):hover { background: rgba(8,9,12,0.06); }
+
+  .cart-icon {
+    position: absolute;
+    right: 30px; top: 30px;
+    color: #f5f1e8;
+    font-size: 18px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    height: 640px;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 65% 25%, #3d5a75 0%, #1a2530 45%, #08090c 80%);
+  }
+
+  .hero-tag {
+    position: absolute;
+    top: 106px; left: 30px;
+    max-width: 230px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: rgba(245,241,232,0.7);
+  }
+
+  .hero-wordmark {
+    position: absolute;
+    bottom: -30px; left: -8px; right: -8px;
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(70px, 18vw, 220px);
+    line-height: 0.85;
+    letter-spacing: -3px;
+    color: #f5f1e8;
+    text-transform: lowercase;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  /* ── BESTSELLERS ── */
+  .bestsellers {
+    padding: 60px 30px 80px;
+  }
+
+  .bestsellers h2 {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(26px, 5vw, 34px);
+    text-transform: lowercase;
+    letter-spacing: -0.5px;
+    margin-bottom: 30px;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+  }
+
+  .product-card { cursor: pointer; }
+
+  .product-swatch {
+    aspect-ratio: 3/4;
+    margin-bottom: 12px;
+    border-radius: 2px;
+    background: linear-gradient(160deg, #3d5a75, #1a2530);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .product-swatch.perfume {
+    background: linear-gradient(160deg, #5a4a3d, #2a2018);
+  }
+
+  .product-swatch img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+
+  .product-category-tag {
+    position: absolute;
+    top: 10px; left: 10px;
+    font-size: 10px;
+    letter-spacing: 1px;
+    background: rgba(245,241,232,0.9);
+    color: #08090c;
+    padding: 3px 9px;
+    border-radius: 100px;
+  }
+
+  .product-name {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+
+  .product-price {
+    font-size: 13px;
+    color: #6b6558;
+  }
+
+  /* ── FOOTER ── */
+  .site-footer {
+    background: #08090c;
+    color: rgba(245,241,232,0.5);
+    text-align: center;
+    padding: 34px 20px;
+    font-size: 12px;
+  }
+
+  .site-footer a { color: rgba(245,241,232,0.75); }
+
+  @media (max-width: 560px) {
+    .hero { height: 520px; }
+    .hero-wordmark { font-size: clamp(60px, 22vw, 140px); }
+  }
+</style>
+</head>
+<body>
+
+  <section class="hero">
+    <div class="top-bar">
+      <div class="monogram"><img src="logo.png" alt="Bellesogno" /></div>
+      <div class="nav-pill">
+        <a href="#" class="active" id="navLink1">Shop</a>
+        <a href="#" id="navLink2">New Arrivals</a>
+        <a href="#" id="navLink3">Fragrance</a>
+        <a href="#" id="navLink4">About</a>
+      </div>
+      <span class="cart-icon">🛍</span>
+    </div>
+    <div class="hero-tag" id="heroTagline">Cinematic pieces for people who notice detail.</div>
+    <div class="hero-wordmark" id="brandName">bellesogno</div>
+  </section>
+
+  <section class="bestsellers">
+    <h2 id="bestsellersHeading">bestsellers</h2>
+    <div class="product-grid" id="productGrid">
+      <!-- Products render here via JS, pulled from the Products + Variants sheets -->
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div id="footerText">© 2026 Bellesogno. All rights reserved.</div>
+  </footer>
+
+<script>
+  // ════════════════════════════════════════════════════════════════════════
+  // CONFIG — hardcoded defaults matching the Config sheet right now.
+  // Once the Apps Script backend is wired up, these get overridden live
+  // by whatever's actually in the Sheet — same pattern as GLASSHOUSE.
+  // ════════════════════════════════════════════════════════════════════════
+  const EVENT_CONFIG = {
+    brandName: 'bellesogno',
+    heroTagline: 'Cinematic pieces for people who notice detail.',
+    navLink1: 'Shop',
+    navLink2: 'New Arrivals',
+    navLink3: 'Fragrance',
+    navLink4: 'About',
+    bestsellersHeading: 'bestsellers',
+    footerText: '© 2026 Bellesogno. All rights reserved.'
+  };
+
+  // ════════════════════════════════════════════════════════════════════════
+  // PRODUCTS — hardcoded for now, matching the Products + Variants sheets.
+  // Once Apps Script is wired up, this comes from a live fetch instead.
+  // ════════════════════════════════════════════════════════════════════════
+  const PRODUCTS = [
+    {
+      productID: 'P001',
+      name: 'Test Jacket',
+      category: 'Clothing',
+      basePrice: 1000,
+      image: null // swap in 'jacket1.jpg' once the real photo is ready
+    },
+    {
+      productID: 'P002',
+      name: 'Midnight Bloom',
+      category: 'Perfume',
+      basePrice: 1500,
+      image: null // swap in 'perfume1.jpg' once the real photo is ready
+    }
+  ];
+
+  function applyConfig() {
+    document.getElementById('brandName').textContent = EVENT_CONFIG.brandName;
+    document.getElementById('heroTagline').textContent = EVENT_CONFIG.heroTagline;
+    document.getElementById('navLink1').textContent = EVENT_CONFIG.navLink1;
+    document.getElementById('navLink2').textContent = EVENT_CONFIG.navLink2;
+    document.getElementById('navLink3').textContent = EVENT_CONFIG.navLink3;
+    document.getElementById('navLink4').textContent = EVENT_CONFIG.navLink4;
+    document.getElementById('bestsellersHeading').textContent = EVENT_CONFIG.bestsellersHeading;
+    document.getElementById('footerText').textContent = EVENT_CONFIG.footerText;
+  }
+
+  function formatPrice(n) {
+    return '৳' + Number(n).toLocaleString('en-IN');
+  }
+
+  function renderProducts() {
+    const grid = document.getElementById('productGrid');
+    grid.innerHTML = PRODUCTS.map(p => {
+      const swatchClass = p.category === 'Perfume' ? 'product-swatch perfume' : 'product-swatch';
+      const media = p.image
+        ? `<img src="${p.image}" alt="${p.name}" />`
+        : '';
+      return `
+        <div class="product-card">
+          <div class="${swatchClass}">
+            <span class="product-category-tag">${p.category}</span>
+            ${media}
+          </div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-price">${formatPrice(p.basePrice)}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  applyConfig();
+  renderProducts();
+</script>
+
+</body>
+</html>
