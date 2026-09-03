@@ -236,9 +236,9 @@
     <div class="monogram"><img src="logo.png" alt="Bellesogno" /></div>
     <div class="nav-pill">
       <a href="shop.html" class="active">Shop</a>
-      <a href="#">New Arrivals</a>
-      <a href="#">Fragrance</a>
-      <a href="#">About</a>
+      <a href="shop.html?category=Clothing">Clothes</a>
+      <a href="fragrance.html">Fragrance</a>
+      <a href="about.html">About</a>
     </div>
     <a href="#" class="cart-link">🛍<span class="cart-badge" id="cartBadge">0</span></a>
   </div>
@@ -432,9 +432,17 @@
     closeModal();
   });
 
+  // ── Read ?category= from the URL, so links like "Clothes" in the nav
+  // land with that filter already selected instead of always showing "All" ──
+  const urlParams = new URLSearchParams(window.location.search);
+  const categoryFromUrl = urlParams.get('category');
+
   // ── Load products live from the Sheet ──
   fetchProducts((products) => {
     ALL_PRODUCTS = products;
+    if (categoryFromUrl && getCategories(products).includes(categoryFromUrl)) {
+      ACTIVE_CATEGORY = categoryFromUrl;
+    }
     renderFilters();
     renderGrid();
   });
