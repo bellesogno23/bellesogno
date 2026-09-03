@@ -127,6 +127,51 @@
     text-align: center; padding: 24px 20px; font-size: 12px;
     border-top: 1px solid rgba(245,241,232,0.08);
   }
+
+  /* ── Scroll reveal ── */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── Cart badge pop ── */
+  .cart-badge.pop { animation: badgePop 0.35s ease; }
+  @keyframes badgePop { 0% { transform: scale(1); } 45% { transform: scale(1.45); } 100% { transform: scale(1); } }
+
+  /* ── Button micro-interactions (site-wide) ── */
+  button, a.social-follow-btn, a.whatsapp-btn, a.whatsapp-recap-btn, a.place-order-btn, a.add-to-cart-btn {
+    transition: transform 0.15s ease;
+  }
+  button:active, a.social-follow-btn:active, a.whatsapp-btn:active, a.whatsapp-recap-btn:active,
+  a.place-order-btn:active, a.add-to-cart-btn:active {
+    transform: scale(0.96);
+  }
+
+  /* ── Mobile nav (hamburger + full-screen overlay) ── */
+  .hamburger-btn {
+    display: none;
+    background: none; border: none; color: #f5f1e8;
+    font-size: 22px; cursor: pointer; z-index: 5;
+  }
+  .mobile-nav-overlay {
+    display: none;
+    position: fixed; inset: 0; background: #08090c; z-index: 200;
+    flex-direction: column; align-items: center; justify-content: center; gap: 26px;
+    opacity: 0; transition: opacity 0.25s ease;
+  }
+  .mobile-nav-overlay.open { display: flex; opacity: 1; }
+  .mobile-nav-overlay a {
+    color: rgba(245,241,232,0.7); font-size: 22px; font-weight: 600;
+    font-family: 'Work Sans', sans-serif;
+  }
+  .mobile-nav-overlay a.active { color: #f5f1e8; }
+  .mobile-nav-close {
+    position: absolute; top: 26px; right: 26px;
+    background: none; border: none; color: #f5f1e8; font-size: 28px; cursor: pointer;
+  }
+
+  @media (max-width: 640px) {
+    .nav-pill { display: none; }
+    .hamburger-btn { display: block; }
+  }
 </style>
 </head>
 <body>
@@ -140,6 +185,15 @@
       <a href="fragrance.html">Fragrance</a>
       <a href="about.html" class="active">About</a>
     </div>
+    <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+    <div class="mobile-nav-overlay" id="mobileNavOverlay">
+      <button class="mobile-nav-close" id="mobileNavClose">✕</button>
+      <a href="shop.html">Shop</a>
+      <a href="clothes.html">Clothes</a>
+      <a href="fragrance.html">Fragrance</a>
+      <a href="about.html" class="active">About</a>
+    </div>
+
     <a href="cart.html" class="cart-link">🛍<span class="cart-badge" id="cartBadge">0</span></a>
   </div>
 
@@ -148,28 +202,28 @@
     <div class="about-title">a beautiful dream, made wearable</div>
   </div>
 
-  <div class="about-body">
+  <div class="about-body reveal">
     <p>Bellesogno takes its name from the Italian for <em>beautiful dream</em> — and that's the feeling we design toward. Not trend-chasing, not seasonal noise. Just pieces and scents considered carefully enough to still feel right months, or years, from now.</p>
     <p>We started as two ideas that kept circling each other: clothing built with real attention to cut and fabric, and fragrance composed the way a favorite song is written — with restraint, not excess. Eventually we stopped treating them as separate things. A Bellesogno wardrobe was always going to need a Bellesogno scent to go with it.</p>
     <p>Every piece we release, we release because we'd wear it ourselves. That's the whole standard.</p>
   </div>
 
   <div class="pillars">
-    <div class="pillar">
+    <div class="pillar reveal">
       <div class="pillar-title">considered, not fast</div>
       <div class="pillar-desc">We'd rather release less and mean every piece of it than chase every passing trend.</div>
     </div>
-    <div class="pillar">
+    <div class="pillar reveal">
       <div class="pillar-title">worn slowly</div>
       <div class="pillar-desc">Clothing and fragrance built to reveal themselves over time — not everything at once.</div>
     </div>
-    <div class="pillar">
+    <div class="pillar reveal">
       <div class="pillar-title">honest from the start</div>
       <div class="pillar-desc">No payment gateway tricks, no hidden charges. Order, and pay when it actually arrives at your door.</div>
     </div>
   </div>
 
-  <div class="contact-section">
+  <div class="contact-section reveal">
     <div class="contact-title">say hello</div>
     <div class="contact-copy">Questions about an order, a fit, or a fragrance? We're always reachable.</div>
     <div class="contact-links">
@@ -181,6 +235,7 @@
   <div class="site-footer" id="footerText">© 2026 Bellesogno. All rights reserved.</div>
 
 <script src="shop-common.js"></script>
+<script src="scroll-reveal.js"></script>
 <script>
   // ── Sliding nav pill indicator ──
   (function initNavSlide() {
@@ -207,6 +262,17 @@
     moveIndicatorTo(activeLink);
     requestAnimationFrame(() => { indicator.style.transition = ''; });
   })();
+
+  // ── Mobile nav overlay ──
+  (function initMobileNav() {
+    const btn = document.getElementById('hamburgerBtn');
+    const overlay = document.getElementById('mobileNavOverlay');
+    const closeBtn = document.getElementById('mobileNavClose');
+    if (!btn || !overlay) return;
+    btn.addEventListener('click', () => overlay.classList.add('open'));
+    closeBtn.addEventListener('click', () => overlay.classList.remove('open'));
+  })();
+
 
   // Pull live contact details from the Config sheet, with sensible fallbacks
   fetch(APPS_SCRIPT_URL + '?action=getConfig')
