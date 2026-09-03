@@ -139,6 +139,51 @@
   .add-to-cart-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
   .not-found { text-align: center; padding: 100px 20px; color: #6b6558; }
+
+  /* ── Scroll reveal ── */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── Cart badge pop ── */
+  .cart-badge.pop { animation: badgePop 0.35s ease; }
+  @keyframes badgePop { 0% { transform: scale(1); } 45% { transform: scale(1.45); } 100% { transform: scale(1); } }
+
+  /* ── Button micro-interactions (site-wide) ── */
+  button, a.social-follow-btn, a.whatsapp-btn, a.whatsapp-recap-btn, a.place-order-btn, a.add-to-cart-btn {
+    transition: transform 0.15s ease;
+  }
+  button:active, a.social-follow-btn:active, a.whatsapp-btn:active, a.whatsapp-recap-btn:active,
+  a.place-order-btn:active, a.add-to-cart-btn:active {
+    transform: scale(0.96);
+  }
+
+  /* ── Mobile nav (hamburger + full-screen overlay) ── */
+  .hamburger-btn {
+    display: none;
+    background: none; border: none; color: #f5f1e8;
+    font-size: 22px; cursor: pointer; z-index: 5;
+  }
+  .mobile-nav-overlay {
+    display: none;
+    position: fixed; inset: 0; background: #08090c; z-index: 200;
+    flex-direction: column; align-items: center; justify-content: center; gap: 26px;
+    opacity: 0; transition: opacity 0.25s ease;
+  }
+  .mobile-nav-overlay.open { display: flex; opacity: 1; }
+  .mobile-nav-overlay a {
+    color: rgba(245,241,232,0.7); font-size: 22px; font-weight: 600;
+    font-family: 'Work Sans', sans-serif;
+  }
+  .mobile-nav-overlay a.active { color: #f5f1e8; }
+  .mobile-nav-close {
+    position: absolute; top: 26px; right: 26px;
+    background: none; border: none; color: #f5f1e8; font-size: 28px; cursor: pointer;
+  }
+
+  @media (max-width: 640px) {
+    .nav-pill { display: none; }
+    .hamburger-btn { display: block; }
+  }
 </style>
 </head>
 <body>
@@ -152,6 +197,15 @@
       <a href="fragrance.html">Fragrance</a>
       <a href="about.html">About</a>
     </div>
+    <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+    <div class="mobile-nav-overlay" id="mobileNavOverlay">
+      <button class="mobile-nav-close" id="mobileNavClose">✕</button>
+      <a href="shop.html" class="active">Shop</a>
+      <a href="clothes.html">Clothes</a>
+      <a href="fragrance.html">Fragrance</a>
+      <a href="about.html">About</a>
+    </div>
+
     <a href="cart.html" class="cart-link">🛍<span class="cart-badge" id="cartBadge">0</span></a>
   </div>
 
@@ -162,6 +216,7 @@
   </div>
 
 <script src="shop-common.js"></script>
+<script src="scroll-reveal.js"></script>
 <script>
   // ── Sliding nav pill indicator ──
   (function initNavSlide() {
@@ -188,6 +243,17 @@
     moveIndicatorTo(activeLink);
     requestAnimationFrame(() => { indicator.style.transition = ''; });
   })();
+
+  // ── Mobile nav overlay ──
+  (function initMobileNav() {
+    const btn = document.getElementById('hamburgerBtn');
+    const overlay = document.getElementById('mobileNavOverlay');
+    const closeBtn = document.getElementById('mobileNavClose');
+    if (!btn || !overlay) return;
+    btn.addEventListener('click', () => overlay.classList.add('open'));
+    closeBtn.addEventListener('click', () => overlay.classList.remove('open'));
+  })();
+
 
   const params = new URLSearchParams(window.location.search);
   const productID = params.get('id');
