@@ -99,12 +99,21 @@ function getCartCount() {
   return getCart().reduce((sum, item) => sum + item.quantity, 0);
 }
 
+let _prevCartCount = null;
 function updateCartBadge() {
   const badge = document.getElementById('cartBadge');
   if (!badge) return;
   const count = getCartCount();
   badge.textContent = count;
   badge.style.display = count > 0 ? 'flex' : 'none';
+
+  // Pop only when the count actually changes (not on first page load)
+  if (_prevCartCount !== null && count !== _prevCartCount) {
+    badge.classList.remove('pop');
+    void badge.offsetWidth; // force reflow so the animation restarts
+    badge.classList.add('pop');
+  }
+  _prevCartCount = count;
 }
 
 document.addEventListener('DOMContentLoaded', updateCartBadge);
