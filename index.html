@@ -40,20 +40,39 @@
   .monogram img { width: 100%; height: 100%; object-fit: cover; }
 
   .nav-pill {
+    position: relative;
     display: flex;
     background: rgba(245,241,232,0.96);
     border-radius: 100px;
     padding: 6px;
   }
+  .nav-pill-indicator {
+    position: absolute;
+    top: 6px; bottom: 6px; left: 6px;
+    border-radius: 100px;
+    transition: transform 0.35s cubic-bezier(0.65,0,0.35,1), width 0.35s cubic-bezier(0.65,0,0.35,1);
+    z-index: 0;
+    background: linear-gradient(115deg, #1a2530, #3d5a75, #08090c, #1a2530);
+    background-size: 300% 300%;
+    animation: holoShift 6s ease infinite;
+    box-shadow: 0 2px 10px rgba(61,90,117,0.4);
+  }
+  @keyframes holoShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
   .nav-pill a {
+    position: relative;
+    z-index: 1;
     padding: 9px 20px;
     font-size: 13px;
     font-weight: 600;
     border-radius: 100px;
-    transition: background 0.2s;
+    color: #08090c;
+    transition: color 0.25s ease;
   }
-  .nav-pill a.active { background: #08090c; color: #f5f1e8; }
-  .nav-pill a:not(.active):hover { background: rgba(8,9,12,0.06); }
+  .nav-pill a.text-light { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
 
   .cart-icon {
     position: absolute;
@@ -153,6 +172,69 @@
   }
 
   /* ── FOOTER ── */
+  /* ── Social strip ── */
+  .social-strip {
+    background: #f5f1e8;
+    padding: 60px 30px 70px;
+    text-align: center;
+    border-top: 1px solid rgba(8,9,12,0.1);
+  }
+  .social-eyebrow {
+    font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+    color: #9e222c; margin-bottom: 10px;
+  }
+  .social-title {
+    font-family: 'Anton', sans-serif; font-size: clamp(24px, 5vw, 32px);
+    text-transform: lowercase; margin-bottom: 26px;
+  }
+  .social-grid {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;
+    max-width: 640px; margin: 0 auto 26px;
+  }
+  .social-grid div { aspect-ratio: 1/1; border-radius: 2px; }
+  .social-grid div:nth-child(1) { background: linear-gradient(160deg, #3d5a75, #1a2530); }
+  .social-grid div:nth-child(2) { background: linear-gradient(160deg, #5a4a3d, #2a2018); }
+  .social-grid div:nth-child(3) { background: linear-gradient(160deg, #9e222c, #4a1015); }
+  .social-grid div:nth-child(4) { background: linear-gradient(160deg, #7a7a7a, #3a3a3a); }
+  .social-grid div:nth-child(5) { background: linear-gradient(160deg, #c9906a, #6b3a2a); }
+  .social-grid div:nth-child(6) { background: linear-gradient(160deg, #1a2530, #08090c); }
+  .social-follow-btn {
+    display: inline-block; padding: 12px 28px;
+    background: #08090c; color: #f5f1e8;
+    border-radius: 100px; font-size: 13px; font-weight: 600;
+  }
+
+  /* ── Capture strip (notify me + WhatsApp) ── */
+  .capture-strip {
+    background: #08090c; color: #f5f1e8;
+    padding: 60px 30px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+    max-width: 900px; margin: 0 auto;
+  }
+  @media (max-width: 640px) { .capture-strip { grid-template-columns: 1fr; } }
+  .capture-col h3 {
+    font-family: 'Anton', sans-serif; font-size: 20px; text-transform: lowercase; margin-bottom: 10px;
+  }
+  .capture-col p { font-size: 13px; color: rgba(245,241,232,0.6); margin-bottom: 20px; line-height: 1.5; }
+  .notify-form { display: flex; gap: 8px; }
+  .notify-form input {
+    flex: 1; padding: 12px 14px; border-radius: 6px;
+    border: 1px solid rgba(245,241,232,0.25); background: rgba(245,241,232,0.06);
+    color: #f5f1e8; font-family: 'Work Sans', sans-serif; font-size: 13px;
+  }
+  .notify-form input::placeholder { color: rgba(245,241,232,0.4); }
+  .notify-form button {
+    padding: 12px 20px; border-radius: 6px; border: none;
+    background: #f5f1e8; color: #08090c; font-size: 13px; font-weight: 700; cursor: pointer;
+  }
+  .notify-success { font-size: 13px; color: #7fa3c2; display: none; }
+  .whatsapp-btn {
+    display: inline-block; padding: 13px 26px;
+    border: 1px solid rgba(245,241,232,0.3); border-radius: 100px;
+    font-size: 13px; font-weight: 600; color: #f5f1e8;
+  }
+  .whatsapp-btn:hover { background: rgba(245,241,232,0.08); }
+
   .site-footer {
     background: #08090c;
     color: rgba(245,241,232,0.5);
@@ -174,7 +256,8 @@
   <section class="hero">
     <div class="top-bar">
       <a href="index.html" class="monogram"><img src="logo.png" alt="Bellesogno" /></a>
-      <div class="nav-pill">
+      <div class="nav-pill" id="navPill">
+      <div class="nav-pill-indicator" id="navIndicator"></div>
         <a href="shop.html" class="active" id="navLink1">Shop</a>
         <a href="clothes.html" id="navLink2">Clothes</a>
         <a href="fragrance.html" id="navLink3">Fragrance</a>
@@ -193,11 +276,65 @@
     </div>
   </section>
 
+  <!-- ── Social proof strip ── -->
+  <section class="social-strip">
+    <div class="social-eyebrow">Follow Along</div>
+    <div class="social-title">@<span id="instaHandleText">bellesogno</span></div>
+    <div class="social-grid">
+      <div></div><div></div><div></div><div></div><div></div><div></div>
+    </div>
+    <a href="#" id="instaFollowBtn" class="social-follow-btn" target="_blank" rel="noopener">Follow on Instagram</a>
+  </section>
+
+  <!-- ── Notify me + WhatsApp capture ── -->
+  <section class="capture-strip">
+    <div class="capture-col">
+      <h3>stay in the loop</h3>
+      <p>Get notified the moment new pieces drop.</p>
+      <form class="notify-form" id="notifyForm">
+        <input type="text" id="notifyPhone" placeholder="01XXXXXXXXX" required />
+        <button type="submit" id="notifyBtn">Notify Me</button>
+      </form>
+      <div class="notify-success" id="notifySuccess">Thanks — we'll let you know!</div>
+    </div>
+    <div class="capture-col">
+      <h3>have a question?</h3>
+      <p>Chat with us directly before you order — sizing, delivery, anything.</p>
+      <a href="#" id="whatsappBtn" class="whatsapp-btn" target="_blank" rel="noopener">Chat on WhatsApp</a>
+    </div>
+  </section>
+
   <footer class="site-footer">
     <div id="footerText">© 2026 Bellesogno. All rights reserved.</div>
   </footer>
 
 <script>
+  // ── Sliding nav pill indicator ──
+  (function initNavSlide() {
+    const pill = document.getElementById('navPill');
+    const indicator = document.getElementById('navIndicator');
+    if (!pill || !indicator) return;
+    const links = Array.from(pill.querySelectorAll('a'));
+    const activeLink = pill.querySelector('a.active') || links[0];
+    if (!activeLink) return;
+
+    function moveIndicatorTo(link) {
+      indicator.style.transform = `translateX(${link.offsetLeft - 6}px)`;
+      indicator.style.width = `${link.offsetWidth}px`;
+      links.forEach(l => l.classList.remove('text-light'));
+      link.classList.add('text-light');
+    }
+
+    links.forEach(link => {
+      link.addEventListener('mouseenter', () => moveIndicatorTo(link));
+    });
+    pill.addEventListener('mouseleave', () => moveIndicatorTo(activeLink));
+
+    indicator.style.transition = 'none';
+    moveIndicatorTo(activeLink);
+    requestAnimationFrame(() => { indicator.style.transition = ''; });
+  })();
+
   // ════════════════════════════════════════════════════════════════════════
   // APPS SCRIPT URL — paste your deployment URL here once it's live.
   // (Extensions → Apps Script → Deploy → New deployment → Web app)
@@ -231,6 +368,23 @@
     document.getElementById('navLink4').textContent = EVENT_CONFIG.navLink4;
     document.getElementById('bestsellersHeading').textContent = EVENT_CONFIG.bestsellersHeading;
     document.getElementById('footerText').textContent = EVENT_CONFIG.footerText;
+
+    // Instagram handle + follow link (parses out the @handle from a full URL
+    // like https://www.instagram.com/bellesogno/ or accepts a bare handle)
+    if (EVENT_CONFIG.instagram) {
+      const raw = String(EVENT_CONFIG.instagram).trim();
+      const match = raw.match(/instagram\.com\/([^/?]+)/i);
+      const handle = match ? match[1] : raw.replace(/^@/, '');
+      document.getElementById('instaHandleText').textContent = handle;
+      const followBtn = document.getElementById('instaFollowBtn');
+      followBtn.href = raw.startsWith('http') ? raw : 'https://instagram.com/' + handle;
+    }
+
+    // WhatsApp chat link
+    if (EVENT_CONFIG.whatsapp) {
+      const digits = String(EVENT_CONFIG.whatsapp).replace(/[^0-9]/g, '');
+      document.getElementById('whatsappBtn').href = 'https://wa.me/' + digits;
+    }
   }
 
   function formatPrice(n) {
@@ -320,7 +474,47 @@
   loadData('getConfig', applyConfigData);
   loadData('getProducts', applyProductsData);
   updateCartBadge();
+
+  // ── Notify-me form: submits via a hidden iframe (same pattern as
+  // cart.html's checkout), so it works cross-origin without CORS issues.
+  // We can't read the response back, so we just show a success message
+  // after a short delay. ──
+  document.getElementById('notifyForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const phone = document.getElementById('notifyPhone').value.trim();
+    if (!phone) return;
+
+    const btn = document.getElementById('notifyBtn');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = APPS_SCRIPT_URL;
+    form.target = 'notifyHiddenFrame';
+    form.style.display = 'none';
+
+    const fields = { formType: 'subscribe', phone: phone };
+    Object.keys(fields).forEach(key => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = key;
+      input.value = fields[key];
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+
+    setTimeout(() => {
+      document.getElementById('notifyForm').style.display = 'none';
+      document.getElementById('notifySuccess').style.display = 'block';
+    }, 900);
+  });
 </script>
+
+<iframe name="notifyHiddenFrame" style="display:none;"></iframe>
 
 </body>
 </html>
