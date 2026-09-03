@@ -242,7 +242,7 @@
     grid.innerHTML = PRODUCTS.map(p => {
       const swatchClass = p.category === 'Perfume' ? 'product-swatch perfume' : 'product-swatch';
       const media = p.images
-        ? `<img src="${p.images}" alt="${p.name}" />`
+        ? `<img src="${p.images}" alt="${p.name}" onerror="this.style.display='none'" />`
         : '';
       return `
         <div class="product-card">
