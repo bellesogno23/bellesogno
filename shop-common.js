@@ -79,6 +79,22 @@ function removeFromCart(productID, variantLabel) {
   saveCart(cart);
 }
 
+function updateCartItemQuantity(productID, variantLabel, newQuantity) {
+  const cart = getCart();
+  const item = cart.find(c => c.productID === productID && c.variantLabel === variantLabel);
+  if (!item) return;
+  if (newQuantity <= 0) {
+    removeFromCart(productID, variantLabel);
+    return;
+  }
+  item.quantity = newQuantity;
+  saveCart(cart);
+}
+
+function getCartTotal() {
+  return getCart().reduce((sum, item) => sum + (item.price * item.quantity), 0);
+}
+
 function getCartCount() {
   return getCart().reduce((sum, item) => sum + item.quantity, 0);
 }
