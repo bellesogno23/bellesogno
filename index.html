@@ -130,7 +130,8 @@
     gap: 20px;
   }
 
-  .product-card { cursor: pointer; }
+  .product-card { cursor: pointer; transition: transform 0.25s ease, box-shadow 0.25s ease; }
+  .product-card:hover { transform: translateY(-5px); box-shadow: 0 12px 24px rgba(8,9,12,0.12); }
 
   .product-swatch {
     aspect-ratio: 3/4;
@@ -140,6 +141,8 @@
     position: relative;
     overflow: hidden;
   }
+  .product-swatch img { transition: transform 0.45s ease; }
+  .product-card:hover .product-swatch img { transform: scale(1.06); }
 
   .product-swatch.perfume {
     background: linear-gradient(160deg, #5a4a3d, #2a2018);
@@ -249,6 +252,55 @@
     .hero { height: 520px; }
     .hero-wordmark { font-size: clamp(60px, 22vw, 140px); }
   }
+
+  @media (max-width: 480px) {
+    .hero-wordmark { font-size: 52px; bottom: -6px; left: 0; right: 0; }
+  }
+
+  /* ── Scroll reveal ── */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── Cart badge pop ── */
+  .cart-badge.pop { animation: badgePop 0.35s ease; }
+  @keyframes badgePop { 0% { transform: scale(1); } 45% { transform: scale(1.45); } 100% { transform: scale(1); } }
+
+  /* ── Button micro-interactions (site-wide) ── */
+  button, a.social-follow-btn, a.whatsapp-btn, a.whatsapp-recap-btn, a.place-order-btn, a.add-to-cart-btn {
+    transition: transform 0.15s ease;
+  }
+  button:active, a.social-follow-btn:active, a.whatsapp-btn:active, a.whatsapp-recap-btn:active,
+  a.place-order-btn:active, a.add-to-cart-btn:active {
+    transform: scale(0.96);
+  }
+
+  /* ── Mobile nav (hamburger + full-screen overlay) ── */
+  .hamburger-btn {
+    display: none;
+    background: none; border: none; color: #f5f1e8;
+    font-size: 22px; cursor: pointer; z-index: 5;
+  }
+  .mobile-nav-overlay {
+    display: none;
+    position: fixed; inset: 0; background: #08090c; z-index: 200;
+    flex-direction: column; align-items: center; justify-content: center; gap: 26px;
+    opacity: 0; transition: opacity 0.25s ease;
+  }
+  .mobile-nav-overlay.open { display: flex; opacity: 1; }
+  .mobile-nav-overlay a {
+    color: rgba(245,241,232,0.7); font-size: 22px; font-weight: 600;
+    font-family: 'Work Sans', sans-serif;
+  }
+  .mobile-nav-overlay a.active { color: #f5f1e8; }
+  .mobile-nav-close {
+    position: absolute; top: 26px; right: 26px;
+    background: none; border: none; color: #f5f1e8; font-size: 28px; cursor: pointer;
+  }
+
+  @media (max-width: 640px) {
+    .nav-pill { display: none; }
+    .hamburger-btn { display: block; }
+  }
 </style>
 </head>
 <body>
@@ -263,13 +315,22 @@
         <a href="fragrance.html" id="navLink3">Fragrance</a>
         <a href="about.html" id="navLink4">About</a>
       </div>
+    <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+    <div class="mobile-nav-overlay" id="mobileNavOverlay">
+      <button class="mobile-nav-close" id="mobileNavClose">✕</button>
+      <a href="shop.html" class="active">Shop</a>
+        <a href="clothes.html">Clothes</a>
+        <a href="fragrance.html">Fragrance</a>
+        <a href="about.html">About</a>
+    </div>
+
       <a href="cart.html" class="cart-icon">🛍<span class="cart-badge" id="cartBadge" style="display:none; position:absolute; top:-8px; right:-10px; background:#9e222c; color:#fff; font-size:10px; font-weight:700; width:18px; height:18px; border-radius:50%; align-items:center; justify-content:center;">0</span></a>
     </div>
     <div class="hero-tag" id="heroTagline">Cinematic pieces for people who notice detail.</div>
     <div class="hero-wordmark" id="brandName">bellesogno</div>
   </section>
 
-  <section class="bestsellers">
+  <section class="bestsellers reveal">
     <h2 id="bestsellersHeading">bestsellers</h2>
     <div class="product-grid" id="productGrid">
       <!-- Products render here via JS, pulled from the Products + Variants sheets -->
@@ -277,7 +338,7 @@
   </section>
 
   <!-- ── Social proof strip ── -->
-  <section class="social-strip">
+  <section class="social-strip reveal">
     <div class="social-eyebrow">Follow Along</div>
     <div class="social-title">@<span id="instaHandleText">bellesogno</span></div>
     <div class="social-grid">
@@ -287,7 +348,7 @@
   </section>
 
   <!-- ── Notify me + WhatsApp capture ── -->
-  <section class="capture-strip">
+  <section class="capture-strip reveal">
     <div class="capture-col">
       <h3>stay in the loop</h3>
       <p>Get notified the moment new pieces drop.</p>
@@ -308,6 +369,7 @@
     <div id="footerText">© 2026 Bellesogno. All rights reserved.</div>
   </footer>
 
+<script src="scroll-reveal.js"></script>
 <script>
   // ── Sliding nav pill indicator ──
   (function initNavSlide() {
@@ -333,6 +395,16 @@
     indicator.style.transition = 'none';
     moveIndicatorTo(activeLink);
     requestAnimationFrame(() => { indicator.style.transition = ''; });
+  })();
+
+  // ── Mobile nav overlay ──
+  (function initMobileNav() {
+    const btn = document.getElementById('hamburgerBtn');
+    const overlay = document.getElementById('mobileNavOverlay');
+    const closeBtn = document.getElementById('mobileNavClose');
+    if (!btn || !overlay) return;
+    btn.addEventListener('click', () => overlay.classList.add('open'));
+    closeBtn.addEventListener('click', () => overlay.classList.remove('open'));
   })();
 
   // ════════════════════════════════════════════════════════════════════════
@@ -399,7 +471,7 @@
         ? `<img src="${p.images}" alt="${p.name}" onerror="this.style.display='none'" />`
         : '';
       return `
-        <div class="product-card">
+        <div class="product-card reveal">
           <div class="${swatchClass}">
             <span class="product-category-tag">${p.category}</span>
             ${media}
@@ -409,6 +481,7 @@
         </div>
       `;
     }).join('');
+    initScrollReveal();
   }
 
   // ── Fetch config live from the Sheet — fetch() first (works if Apps
@@ -459,6 +532,7 @@
       });
   }
 
+  let _prevCartCount = null;
   function updateCartBadge() {
     const badge = document.getElementById('cartBadge');
     if (!badge) return;
@@ -467,6 +541,13 @@
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
     badge.textContent = count;
     badge.style.display = count > 0 ? 'flex' : 'none';
+
+    if (_prevCartCount !== null && count !== _prevCartCount) {
+      badge.classList.remove('pop');
+      void badge.offsetWidth;
+      badge.classList.add('pop');
+    }
+    _prevCartCount = count;
   }
 
   applyConfig();
