@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sovanze — Bellesogno</title>
+<meta name="description" content="Sovanze — fine jewelry from Bellesogno, made for quiet detail, not decoration for its own sake." />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Work Sans', sans-serif; background: #f7e7ce; color: #4a0101; }
+  a { text-decoration: none; color: inherit; }
+
+  .top-bar {
+    background: #4a0101;
+    padding: 22px 30px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .monogram {
+    position: absolute; left: 30px; top: 50%; transform: translateY(-50%);
+    width: 42px; height: 42px; border-radius: 50%; overflow: hidden;
+  }
+  .monogram img { width: 100%; height: 100%; object-fit: cover; }
+  .nav-pill {
+    position: relative;
+    display: flex;
+    background: rgba(247, 231, 206,0.96);
+    border-radius: 100px;
+    padding: 6px;
+  }
+  .nav-pill-indicator {
+    position: absolute;
+    top: 6px; bottom: 6px; left: 6px;
+    border-radius: 100px;
+    transition: transform 0.35s cubic-bezier(0.65,0,0.35,1), width 0.35s cubic-bezier(0.65,0,0.35,1);
+    z-index: 0;
+    background: linear-gradient(115deg, #62211d, #834d45, #4a0101, #62211d);
+    background-size: 300% 300%;
+    animation: holoShift 6s ease infinite;
+    box-shadow: 0 2px 10px rgba(131, 77, 69,0.4);
+  }
+  @keyframes holoShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .nav-pill a {
+    position: relative;
+    z-index: 1;
+    padding: 9px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 100px;
+    color: #4a0101;
+    transition: color 0.25s ease;
+  }
+  .nav-pill a.text-light { color: #fffaf0; text-shadow: 0 1px 3px rgba(26, 0, 0,0.3); }
+  .cart-link { position: absolute; right: 30px; top: 50%; transform: translateY(-50%); color: #f7e7ce; font-size: 20px; }
+  .cart-badge {
+    display: none; position: absolute; top: -8px; right: -10px;
+    background: #7b423b; color: #fffaf0; font-size: 10px; font-weight: 700;
+    width: 18px; height: 18px; border-radius: 50%; align-items: center; justify-content: center;
+  }
+
+  /* ── Editorial intro — cold blue, matching the site's main hero mood ── */
+  .sovanze-intro {
+    background: radial-gradient(ellipse at 60% 20%, #996a5f 0%, #652420 45%, #4a0101 85%);
+    padding: 90px 30px 70px;
+    text-align: center;
+    color: #f7e7ce;
+  }
+  .sovanze-eyebrow {
+    font-size: 12px; letter-spacing: 3px; text-transform: uppercase;
+    color: #c7a795; margin-bottom: 18px;
+  }
+  .sovanze-title {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(36px, 7vw, 58px);
+    text-transform: lowercase; letter-spacing: -1px;
+    margin-bottom: 22px;
+  }
+  .sovanze-copy {
+    max-width: 480px; margin: 0 auto;
+    font-size: 15px; line-height: 1.75;
+    color: rgba(247, 231, 206,0.75);
+  }
+
+  .showcase { padding: 60px 30px 80px; max-width: 1000px; margin: 0 auto; }
+  .showcase h2 {
+    font-family: 'Anton', sans-serif; font-size: clamp(24px, 5vw, 32px);
+    text-transform: lowercase; letter-spacing: -0.5px; margin-bottom: 30px; text-align: center;
+  }
+  .product-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 22px;
+  }
+  .product-card { cursor: pointer; transition: transform 0.25s ease, box-shadow 0.25s ease; }
+  .product-card:hover { transform: translateY(-5px); box-shadow: 0 12px 24px rgba(74, 1, 1,0.12); }
+  .product-swatch {
+    aspect-ratio: 3/4; margin-bottom: 12px; border-radius: 2px; position: relative; overflow: hidden;
+    background: linear-gradient(160deg, #996a5f, #652420);
+  }
+  .product-swatch img { transition: transform 0.45s ease; }
+  .product-card:hover .product-swatch img { transform: scale(1.06); }
+  .product-swatch img { width: 100%; height: 100%; object-fit: cover; }
+  .product-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .product-price { font-size: 13px; color: #8f5c52; }
+  .empty-state { text-align: center; padding: 40px 20px; color: #8f5c52; font-size: 14px; grid-column: 1/-1; }
+
+  /* ── Quick-view modal (same pattern as shop.html / fragrance.html) ── */
+    .modal-overlay {
+    display: flex;
+    position: fixed; inset: 0;
+    background: rgba(74, 1, 1,0.7);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .modal-overlay.open { opacity: 1; visibility: visible; pointer-events: auto; }
+
+  .modal-card {
+    background: #f7e7ce;
+    border-radius: 4px;
+    max-width: 720px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    transform: scale(0.94);
+    transition: transform 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+  }
+  .modal-overlay.open .modal-card { transform: scale(1); }
+  @media (max-width: 640px) { .modal-card { grid-template-columns: 1fr; } }
+  .modal-image { aspect-ratio: 3/4; background: linear-gradient(160deg, #834d45, #62211d); }
+  .modal-image img { width: 100%; height: 100%; object-fit: cover; }
+  .modal-info { padding: 30px; position: relative; }
+  .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 22px; cursor: pointer; color: #4a0101; }
+  .modal-category { font-size: 11px; letter-spacing: 1px; color: #8f5c52; margin-bottom: 8px; }
+  .modal-name { font-family: 'Anton', sans-serif; font-size: 26px; text-transform: lowercase; margin-bottom: 10px; }
+  .modal-desc { font-size: 13px; color: #7a403a; line-height: 1.6; margin-bottom: 16px; }
+  .modal-price { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
+  .variant-label { font-size: 12px; font-weight: 600; margin-bottom: 8px; }
+  .variant-options { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .variant-btn { padding: 8px 16px; border: 1px solid rgba(74, 1, 1,0.25); border-radius: 4px; font-size: 12px; font-weight: 600; background: transparent; cursor: pointer; }
+  .variant-btn.selected { background: #4a0101; color: #f7e7ce; border-color: #4a0101; }
+  .variant-btn.out-of-stock { opacity: 0.35; cursor: not-allowed; text-decoration: line-through; }
+  .qty-row { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+  .qty-btn { width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(74, 1, 1,0.25); background: transparent; font-size: 15px; cursor: pointer; }
+  .qty-value { font-size: 15px; font-weight: 600; min-width: 20px; text-align: center; }
+  .add-to-cart-btn {
+    display: block; width: 100%; padding: 14px; background: #4a0101; color: #f7e7ce;
+    border: none; border-radius: 4px; font-size: 13px; font-weight: 700; letter-spacing: 1px; cursor: pointer; margin-bottom: 12px;
+  }
+  .add-to-cart-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .view-full-link { display: block; text-align: center; font-size: 12px; color: #8f5c52; text-decoration: underline; }
+
+  /* ── Scroll reveal ── */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── Cart badge pop ── */
+  .cart-badge.pop { animation: badgePop 0.35s ease; }
+  @keyframes badgePop { 0% { transform: scale(1); } 45% { transform: scale(1.45); } 100% { transform: scale(1); } }
+
+  /* ── Button micro-interactions (site-wide) ── */
+  button, a.social-follow-btn, a.whatsapp-btn, a.whatsapp-recap-btn, a.place-order-btn, a.add-to-cart-btn {
+    transition: transform 0.15s ease;
+  }
+  button:active, a.social-follow-btn:active, a.whatsapp-btn:active, a.whatsapp-recap-btn:active,
+  a.place-order-btn:active, a.add-to-cart-btn:active {
+    transform: scale(0.96);
+  }
+
+  /* ── Mobile nav (hamburger + full-screen overlay) ── */
+  .hamburger-btn {
+    display: none;
+    background: none; border: none; color: #f7e7ce;
+    font-size: 22px; cursor: pointer; z-index: 5;
+  }
+  .mobile-nav-overlay {
+    display: none;
+    position: fixed; inset: 0; background: #4a0101; z-index: 200;
+    flex-direction: column; align-items: center; justify-content: center; gap: 26px;
+    opacity: 0; transition: opacity 0.25s ease;
+  }
+  .mobile-nav-overlay.open { display: flex; opacity: 1; }
+  .mobile-nav-overlay a {
+    color: rgba(247, 231, 206,0.7); font-size: 22px; font-weight: 600;
+    font-family: 'Work Sans', sans-serif;
+  }
+  .mobile-nav-overlay a.active { color: #f7e7ce; }
+  .mobile-nav-close {
+    position: absolute; top: 26px; right: 26px;
+    background: none; border: none; color: #f7e7ce; font-size: 28px; cursor: pointer;
+  }
+
+  @media (max-width: 640px) {
+    .nav-pill { display: none; }
+    .hamburger-btn { display: block; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <a href="index.html" class="monogram"><img src="logo.png" alt="Bellesogno" /></a>
+    <div class="nav-pill" id="navPill">
+      <div class="nav-pill-indicator" id="navIndicator"></div>
+      <a href="shop.html">Shop</a>
+      <a href="clothes.html">Biancotela</a>
+      <a href="sovanze.html" class="active">Sovanze</a>
+      <a href="fragrance.html">Bellesogno</a>
+      <a href="about.html">About</a>
+    </div>
+    <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+    <div class="mobile-nav-overlay" id="mobileNavOverlay">
+      <button class="mobile-nav-close" id="mobileNavClose">✕</button>
+      <a href="shop.html">Shop</a>
+      <a href="clothes.html">Biancotela</a>
+      <a href="sovanze.html" class="active">Sovanze</a>
+      <a href="fragrance.html">Bellesogno</a>
+      <a href="about.html">About</a>
+    </div>
+
+    <a href="cart.html" class="cart-link">🛍<span class="cart-badge" id="cartBadge">0</span></a>
+  </div>
+
+  <div class="sovanze-intro">
+    <div class="sovanze-eyebrow">Fine Detail</div>
+    <div class="sovanze-title">quiet luxury, worn close</div>
+    <div class="sovanze-copy">
+      Sovanze pieces are made to be noticed slowly — fine detail meant for someone standing close, not across a room. Considered the same way as everything else we make: with restraint, and built to actually last.
+    </div>
+  </div>
+
+  <div class="showcase">
+    <h2>the collection</h2>
+    <div class="product-grid" id="productGrid">
+      <div class="empty-state">Loading…</div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-card">
+      <div class="modal-image" id="modalImage"></div>
+      <div class="modal-info">
+        <button class="modal-close" id="modalClose">&times;</button>
+        <div class="modal-category" id="modalCategory"></div>
+        <div class="modal-name" id="modalName"></div>
+        <div class="modal-desc" id="modalDesc"></div>
+        <div class="modal-price" id="modalPrice"></div>
+        <div class="variant-label" id="variantLabelText"></div>
+        <div class="variant-options" id="variantOptions"></div>
+        <div class="qty-row">
+          <button class="qty-btn" id="qtyMinus">−</button>
+          <span class="qty-value" id="qtyValue">1</span>
+          <button class="qty-btn" id="qtyPlus">+</button>
+        </div>
+        <button class="add-to-cart-btn" id="addToCartBtn">Add to Cart</button>
+        <a class="view-full-link" id="viewFullLink">View full page →</a>
+      </div>
+    </div>
+  </div>
+
+<script src="shop-common.js"></script>
+<script src="scroll-reveal.js"></script>
+<script>
+  // ── Sliding nav pill indicator ──
+  (function initNavSlide() {
+    const pill = document.getElementById('navPill');
+    const indicator = document.getElementById('navIndicator');
+    if (!pill || !indicator) return;
+    const links = Array.from(pill.querySelectorAll('a'));
+    const activeLink = pill.querySelector('a.active') || links[0];
+    if (!activeLink) return;
+
+    function moveIndicatorTo(link) {
+      indicator.style.transform = `translateX(${link.offsetLeft - 6}px)`;
+      indicator.style.width = `${link.offsetWidth}px`;
+      links.forEach(l => l.classList.remove('text-light'));
+      link.classList.add('text-light');
+    }
+
+    links.forEach(link => {
+      link.addEventListener('mouseenter', () => moveIndicatorTo(link));
+    });
+    pill.addEventListener('mouseleave', () => moveIndicatorTo(activeLink));
+
+    indicator.style.transition = 'none';
+    moveIndicatorTo(activeLink);
+    requestAnimationFrame(() => { indicator.style.transition = ''; });
+  })();
+
+  // ── Mobile nav overlay ──
+  (function initMobileNav() {
+    const btn = document.getElementById('hamburgerBtn');
+    const overlay = document.getElementById('mobileNavOverlay');
+    const closeBtn = document.getElementById('mobileNavClose');
+    if (!btn || !overlay) return;
+    btn.addEventListener('click', () => overlay.classList.add('open'));
+    closeBtn.addEventListener('click', () => overlay.classList.remove('open'));
+  })();
+
+
+  let ALL_PRODUCTS = [];
+  let currentModalProduct = null;
+  let selectedVariant = null;
+  let selectedQty = 1;
+
+  function renderGrid() {
+    const grid = document.getElementById('productGrid');
+    const clothing = ALL_PRODUCTS.filter(p => p.category === 'Jewelry');
+
+    if (clothing.length === 0) {
+      grid.innerHTML = '<div class="empty-state">No jewelry listed yet.</div>';
+      return;
+    }
+
+    grid.innerHTML = clothing.map(p => {
+      const media = p.images ? `<img src="${p.images}" alt="${p.name}" onerror="this.style.display='none'" />` : '';
+      return `
+        <div class="product-card" data-id="${p.productID}">
+          <div class="product-swatch">${media}</div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-price">${formatPrice(p.basePrice)}</div>
+        </div>
+      `;
+    }).join('');
+
+    grid.querySelectorAll('.product-card').forEach(card => {
+      card.addEventListener('click', () => openModal(card.dataset.id));
+    });
+    initScrollReveal();
+  }
+
+  function openModal(productID) {
+    const product = ALL_PRODUCTS.find(p => p.productID === productID);
+    if (!product) return;
+
+    currentModalProduct = product;
+    selectedQty = 1;
+    selectedVariant = (product.variants && product.variants.length > 0) ? product.variants[0] : null;
+
+    const imgEl = document.getElementById('modalImage');
+    imgEl.innerHTML = product.images ? `<img src="${product.images}" alt="${product.name}" onerror="this.style.display='none'" />` : '';
+
+    document.getElementById('modalCategory').textContent = product.category;
+    document.getElementById('modalName').textContent = product.name;
+    document.getElementById('modalDesc').textContent = product.description || '';
+    document.getElementById('viewFullLink').href = 'product.html?id=' + product.productID;
+
+    renderVariants();
+    updateModalPrice();
+    document.getElementById('qtyValue').textContent = selectedQty;
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function renderVariants() {
+    const wrap = document.getElementById('variantOptions');
+    const labelEl = document.getElementById('variantLabelText');
+    const variants = currentModalProduct.variants || [];
+
+    if (variants.length === 0) {
+      wrap.innerHTML = '';
+      labelEl.textContent = '';
+      return;
+    }
+
+    labelEl.textContent = 'Select option';
+    wrap.innerHTML = variants.map(v => {
+      const outOfStock = v.stock <= 0;
+      const isSelected = selectedVariant && selectedVariant.variantLabel === v.variantLabel;
+      return `<button class="variant-btn ${isSelected ? 'selected' : ''} ${outOfStock ? 'out-of-stock' : ''}"
+                data-label="${v.variantLabel}" ${outOfStock ? 'disabled' : ''}>${v.variantLabel}</button>`;
+    }).join('');
+
+    wrap.querySelectorAll('.variant-btn:not(.out-of-stock)').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedVariant = variants.find(v => v.variantLabel === btn.dataset.label);
+        renderVariants();
+        updateModalPrice();
+      });
+    });
+  }
+
+  function updateModalPrice() {
+    const price = selectedVariant ? selectedVariant.price : currentModalProduct.basePrice;
+    document.getElementById('modalPrice').textContent = formatPrice(price);
+    const btn = document.getElementById('addToCartBtn');
+    const hasVariants = currentModalProduct.variants && currentModalProduct.variants.length > 0;
+    btn.disabled = hasVariants && !selectedVariant;
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    currentModalProduct = null;
+  }
+
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  document.getElementById('modalOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'modalOverlay') closeModal();
+  });
+  document.getElementById('qtyMinus').addEventListener('click', () => {
+    if (selectedQty > 1) selectedQty--;
+    document.getElementById('qtyValue').textContent = selectedQty;
+  });
+  document.getElementById('qtyPlus').addEventListener('click', () => {
+    selectedQty++;
+    document.getElementById('qtyValue').textContent = selectedQty;
+  });
+  document.getElementById('addToCartBtn').addEventListener('click', () => {
+    if (!currentModalProduct) return;
+    addToCart({
+      productID: currentModalProduct.productID,
+      name: currentModalProduct.name,
+      variantLabel: selectedVariant ? selectedVariant.variantLabel : null,
+      price: selectedVariant ? selectedVariant.price : currentModalProduct.basePrice,
+      quantity: selectedQty
+    });
+    closeModal();
+  });
+
+  fetchProducts((products) => {
+    ALL_PRODUCTS = products;
+    renderGrid();
+  });
+</script>
+
+</body>
+</html>
