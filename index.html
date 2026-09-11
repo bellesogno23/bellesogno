@@ -12,8 +12,8 @@
 
   body {
     font-family: 'Work Sans', sans-serif;
-    background: #f5f1e8;
-    color: #08090c;
+    background: #f7e7ce;
+    color: #4a0101;
   }
 
   a { text-decoration: none; color: inherit; }
@@ -35,14 +35,16 @@
     width: 46px; height: 46px;
     border-radius: 50%;
     overflow: hidden;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+    border: 1px solid rgba(74, 1, 1,0.2);
+    box-shadow: 0 4px 14px rgba(26, 0, 0,0.35);
   }
   .monogram img { width: 100%; height: 100%; object-fit: cover; }
 
   .nav-pill {
     position: relative;
     display: flex;
-    background: rgba(245,241,232,0.96);
+    background: rgba(247, 231, 206,0.96);
+    border: 1px solid rgba(74, 1, 1,0.18);
     border-radius: 100px;
     padding: 6px;
   }
@@ -52,10 +54,10 @@
     border-radius: 100px;
     transition: transform 0.35s cubic-bezier(0.65,0,0.35,1), width 0.35s cubic-bezier(0.65,0,0.35,1);
     z-index: 0;
-    background: linear-gradient(115deg, #1a2530, #3d5a75, #08090c, #1a2530);
+    background: linear-gradient(115deg, #62211d, #834d45, #4a0101, #62211d);
     background-size: 300% 300%;
     animation: holoShift 6s ease infinite;
-    box-shadow: 0 2px 10px rgba(61,90,117,0.4);
+    box-shadow: 0 2px 10px rgba(131, 77, 69,0.4);
   }
   @keyframes holoShift {
     0% { background-position: 0% 50%; }
@@ -69,15 +71,15 @@
     font-size: 13px;
     font-weight: 600;
     border-radius: 100px;
-    color: #08090c;
+    color: #4a0101;
     transition: color 0.25s ease;
   }
-  .nav-pill a.text-light { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+  .nav-pill a.text-light { color: #fffaf0; text-shadow: 0 1px 3px rgba(26, 0, 0,0.3); }
 
   .cart-icon {
     position: absolute;
     right: 30px; top: 30px;
-    color: #f5f1e8;
+    color: #4a0101;
     font-size: 18px;
   }
 
@@ -86,7 +88,7 @@
     position: relative;
     height: 640px;
     overflow: hidden;
-    background: radial-gradient(ellipse at 65% 25%, #3d5a75 0%, #1a2530 45%, #08090c 80%);
+    background: radial-gradient(ellipse at 65% 25%, #fdf6ea 0%, #f7e7ce 55%, #ecd4ab 100%);
   }
 
   .hero-tag {
@@ -95,7 +97,7 @@
     max-width: 230px;
     font-size: 13px;
     line-height: 1.55;
-    color: rgba(245,241,232,0.7);
+    color: rgba(74, 1, 1,0.7);
   }
 
   .hero-wordmark {
@@ -105,7 +107,7 @@
     font-size: clamp(70px, 18vw, 220px);
     line-height: 0.85;
     letter-spacing: -3px;
-    color: #f5f1e8;
+    color: #4a0101;
     text-transform: lowercase;
     white-space: nowrap;
     overflow: hidden;
@@ -116,28 +118,74 @@
     padding: 60px 30px 80px;
   }
 
-  .bestsellers h2 {
+  .bestsellers > h2 {
     font-family: 'Anton', sans-serif;
     font-size: clamp(26px, 5vw, 34px);
     text-transform: lowercase;
     letter-spacing: -0.5px;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
   }
 
+  /* ── Per-brand product rows (Bellesogno / Biancotela / Sovanze) ── */
+  .category-row { margin-bottom: 56px; }
+  .category-row:last-child { margin-bottom: 0; }
+
+  .category-row-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .category-row-head h3 {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(18px, 3.4vw, 22px);
+    text-transform: lowercase;
+    letter-spacing: -0.3px;
+  }
+
+  .category-row-link {
+    font-size: 12px;
+    font-weight: 600;
+    color: #8f5c52;
+    white-space: nowrap;
+  }
+  .category-row-link:hover { color: #4a0101; }
+
+  .empty-category-note {
+    grid-column: 1 / -1;
+    font-size: 13px;
+    color: rgba(74, 1, 1,0.5);
+    padding: 30px 0;
+    text-align: center;
+    border: 1px dashed rgba(74, 1, 1,0.18);
+    border-radius: 4px;
+  }
+
+  /* Fixed column counts — a row with only 1–2 real products still shows
+     properly sized cards instead of stretching to fill the row (that's
+     what auto-fit/minmax used to do here). */
   .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
+  }
+  @media (max-width: 900px) {
+    .product-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .product-grid { grid-template-columns: repeat(2, 1fr); }
   }
 
   .product-card { cursor: pointer; transition: transform 0.25s ease, box-shadow 0.25s ease; }
-  .product-card:hover { transform: translateY(-5px); box-shadow: 0 12px 24px rgba(8,9,12,0.12); }
+  .product-card:hover { transform: translateY(-5px); box-shadow: 0 12px 24px rgba(74, 1, 1,0.12); }
 
   .product-swatch {
     aspect-ratio: 3/4;
     margin-bottom: 12px;
     border-radius: 2px;
-    background: linear-gradient(160deg, #3d5a75, #1a2530);
+    background: linear-gradient(160deg, #834d45, #62211d);
     position: relative;
     overflow: hidden;
   }
@@ -145,7 +193,7 @@
   .product-card:hover .product-swatch img { transform: scale(1.06); }
 
   .product-swatch.perfume {
-    background: linear-gradient(160deg, #5a4a3d, #2a2018);
+    background: linear-gradient(160deg, #7e473f, #61201c);
   }
 
   .product-swatch img {
@@ -157,8 +205,8 @@
     top: 10px; left: 10px;
     font-size: 10px;
     letter-spacing: 1px;
-    background: rgba(245,241,232,0.9);
-    color: #08090c;
+    background: rgba(247, 231, 206,0.9);
+    color: #4a0101;
     padding: 3px 9px;
     border-radius: 100px;
   }
@@ -171,20 +219,20 @@
 
   .product-price {
     font-size: 13px;
-    color: #6b6558;
+    color: #8f5c52;
   }
 
   /* ── FOOTER ── */
   /* ── Social strip ── */
   .social-strip {
-    background: #f5f1e8;
+    background: #f7e7ce;
     padding: 60px 30px 70px;
     text-align: center;
-    border-top: 1px solid rgba(8,9,12,0.1);
+    border-top: 1px solid rgba(74, 1, 1,0.1);
   }
   .social-eyebrow {
     font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
-    color: #9e222c; margin-bottom: 10px;
+    color: #7b423b; margin-bottom: 10px;
   }
   .social-title {
     font-family: 'Anton', sans-serif; font-size: clamp(24px, 5vw, 32px);
@@ -195,21 +243,21 @@
     max-width: 640px; margin: 0 auto 26px;
   }
   .social-grid div { aspect-ratio: 1/1; border-radius: 2px; }
-  .social-grid div:nth-child(1) { background: linear-gradient(160deg, #3d5a75, #1a2530); }
-  .social-grid div:nth-child(2) { background: linear-gradient(160deg, #5a4a3d, #2a2018); }
-  .social-grid div:nth-child(3) { background: linear-gradient(160deg, #9e222c, #4a1015); }
-  .social-grid div:nth-child(4) { background: linear-gradient(160deg, #7a7a7a, #3a3a3a); }
-  .social-grid div:nth-child(5) { background: linear-gradient(160deg, #c9906a, #6b3a2a); }
-  .social-grid div:nth-child(6) { background: linear-gradient(160deg, #1a2530, #08090c); }
+  .social-grid div:nth-child(1) { background: linear-gradient(160deg, #834d45, #62211d); }
+  .social-grid div:nth-child(2) { background: linear-gradient(160deg, #7e473f, #61201c); }
+  .social-grid div:nth-child(3) { background: linear-gradient(160deg, #7b423b, #61201c); }
+  .social-grid div:nth-child(4) { background: linear-gradient(160deg, #9d6f63, #713530); }
+  .social-grid div:nth-child(5) { background: linear-gradient(160deg, #b48e7f, #7a413a); }
+  .social-grid div:nth-child(6) { background: linear-gradient(160deg, #62211d, #4a0101); }
   .social-follow-btn {
     display: inline-block; padding: 12px 28px;
-    background: #08090c; color: #f5f1e8;
+    background: #4a0101; color: #f7e7ce;
     border-radius: 100px; font-size: 13px; font-weight: 600;
   }
 
   /* ── Capture strip (notify me + WhatsApp) ── */
   .capture-strip {
-    background: #08090c; color: #f5f1e8;
+    background: #4a0101; color: #f7e7ce;
     padding: 60px 30px;
     display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
     max-width: 900px; margin: 0 auto;
@@ -218,35 +266,35 @@
   .capture-col h3 {
     font-family: 'Anton', sans-serif; font-size: 20px; text-transform: lowercase; margin-bottom: 10px;
   }
-  .capture-col p { font-size: 13px; color: rgba(245,241,232,0.6); margin-bottom: 20px; line-height: 1.5; }
+  .capture-col p { font-size: 13px; color: rgba(247, 231, 206,0.6); margin-bottom: 20px; line-height: 1.5; }
   .notify-form { display: flex; gap: 8px; }
   .notify-form input {
     flex: 1; padding: 12px 14px; border-radius: 6px;
-    border: 1px solid rgba(245,241,232,0.25); background: rgba(245,241,232,0.06);
-    color: #f5f1e8; font-family: 'Work Sans', sans-serif; font-size: 13px;
+    border: 1px solid rgba(247, 231, 206,0.25); background: rgba(247, 231, 206,0.06);
+    color: #f7e7ce; font-family: 'Work Sans', sans-serif; font-size: 13px;
   }
-  .notify-form input::placeholder { color: rgba(245,241,232,0.4); }
+  .notify-form input::placeholder { color: rgba(247, 231, 206,0.4); }
   .notify-form button {
     padding: 12px 20px; border-radius: 6px; border: none;
-    background: #f5f1e8; color: #08090c; font-size: 13px; font-weight: 700; cursor: pointer;
+    background: #f7e7ce; color: #4a0101; font-size: 13px; font-weight: 700; cursor: pointer;
   }
-  .notify-success { font-size: 13px; color: #7fa3c2; display: none; }
+  .notify-success { font-size: 13px; color: #b48d7e; display: none; }
   .whatsapp-btn {
     display: inline-block; padding: 13px 26px;
-    border: 1px solid rgba(245,241,232,0.3); border-radius: 100px;
-    font-size: 13px; font-weight: 600; color: #f5f1e8;
+    border: 1px solid rgba(247, 231, 206,0.3); border-radius: 100px;
+    font-size: 13px; font-weight: 600; color: #f7e7ce;
   }
-  .whatsapp-btn:hover { background: rgba(245,241,232,0.08); }
+  .whatsapp-btn:hover { background: rgba(247, 231, 206,0.08); }
 
   .site-footer {
-    background: #08090c;
-    color: rgba(245,241,232,0.5);
+    background: #4a0101;
+    color: rgba(247, 231, 206,0.5);
     text-align: center;
     padding: 34px 20px;
     font-size: 12px;
   }
 
-  .site-footer a { color: rgba(245,241,232,0.75); }
+  .site-footer a { color: rgba(247, 231, 206,0.75); }
 
   @media (max-width: 560px) {
     .hero { height: 520px; }
@@ -277,24 +325,24 @@
   /* ── Mobile nav (hamburger + full-screen overlay) ── */
   .hamburger-btn {
     display: none;
-    background: none; border: none; color: #f5f1e8;
+    background: none; border: none; color: #f7e7ce;
     font-size: 22px; cursor: pointer; z-index: 5;
   }
   .mobile-nav-overlay {
     display: none;
-    position: fixed; inset: 0; background: #08090c; z-index: 200;
+    position: fixed; inset: 0; background: #4a0101; z-index: 200;
     flex-direction: column; align-items: center; justify-content: center; gap: 26px;
     opacity: 0; transition: opacity 0.25s ease;
   }
   .mobile-nav-overlay.open { display: flex; opacity: 1; }
   .mobile-nav-overlay a {
-    color: rgba(245,241,232,0.7); font-size: 22px; font-weight: 600;
+    color: rgba(247, 231, 206,0.7); font-size: 22px; font-weight: 600;
     font-family: 'Work Sans', sans-serif;
   }
-  .mobile-nav-overlay a.active { color: #f5f1e8; }
+  .mobile-nav-overlay a.active { color: #f7e7ce; }
   .mobile-nav-close {
     position: absolute; top: 26px; right: 26px;
-    background: none; border: none; color: #f5f1e8; font-size: 28px; cursor: pointer;
+    background: none; border: none; color: #f7e7ce; font-size: 28px; cursor: pointer;
   }
 
   @media (max-width: 640px) {
@@ -311,29 +359,58 @@
       <div class="nav-pill" id="navPill">
       <div class="nav-pill-indicator" id="navIndicator"></div>
         <a href="shop.html" class="active" id="navLink1">Shop</a>
-        <a href="clothes.html" id="navLink2">Clothes</a>
-        <a href="fragrance.html" id="navLink3">Fragrance</a>
+        <a href="clothes.html" id="navLink2">Biancotela</a>
+        <a href="sovanze.html" id="navLink5">Sovanze</a>
+        <a href="fragrance.html" id="navLink3">Bellesogno</a>
         <a href="about.html" id="navLink4">About</a>
       </div>
     <button class="hamburger-btn" id="hamburgerBtn">☰</button>
     <div class="mobile-nav-overlay" id="mobileNavOverlay">
       <button class="mobile-nav-close" id="mobileNavClose">✕</button>
       <a href="shop.html" class="active">Shop</a>
-        <a href="clothes.html">Clothes</a>
-        <a href="fragrance.html">Fragrance</a>
-        <a href="about.html">About</a>
+      <a href="clothes.html">Biancotela</a>
+      <a href="sovanze.html">Sovanze</a>
+      <a href="fragrance.html">Bellesogno</a>
+      <a href="about.html">About</a>
     </div>
 
-      <a href="cart.html" class="cart-icon">🛍<span class="cart-badge" id="cartBadge" style="display:none; position:absolute; top:-8px; right:-10px; background:#9e222c; color:#fff; font-size:10px; font-weight:700; width:18px; height:18px; border-radius:50%; align-items:center; justify-content:center;">0</span></a>
+      <a href="cart.html" class="cart-icon">🛍<span class="cart-badge" id="cartBadge" style="display:none; position:absolute; top:-8px; right:-10px; background:#7b423b; color:#fffaf0; font-size:10px; font-weight:700; width:18px; height:18px; border-radius:50%; align-items:center; justify-content:center;">0</span></a>
     </div>
     <div class="hero-tag" id="heroTagline">Cinematic pieces for people who notice detail.</div>
     <div class="hero-wordmark" id="brandName">bellesogno</div>
   </section>
 
-  <section class="bestsellers reveal">
-    <h2 id="bestsellersHeading">bestsellers</h2>
-    <div class="product-grid" id="productGrid">
-      <!-- Products render here via JS, pulled from the Products + Variants sheets -->
+  <section class="bestsellers">
+    <h2 id="bestsellersHeading" class="reveal">bestsellers</h2>
+
+    <div class="category-row reveal">
+      <div class="category-row-head">
+        <h3>bellesogno</h3>
+        <a href="fragrance.html" class="category-row-link">Shop Bellesogno →</a>
+      </div>
+      <div class="product-grid" id="productGrid-perfume">
+        <!-- Perfume bestsellers render here via JS -->
+      </div>
+    </div>
+
+    <div class="category-row reveal">
+      <div class="category-row-head">
+        <h3>biancotela</h3>
+        <a href="clothes.html" class="category-row-link">Shop Biancotela →</a>
+      </div>
+      <div class="product-grid" id="productGrid-clothing">
+        <!-- Clothing bestsellers render here via JS -->
+      </div>
+    </div>
+
+    <div class="category-row reveal">
+      <div class="category-row-head">
+        <h3>sovanze</h3>
+        <a href="sovanze.html" class="category-row-link">Shop Sovanze →</a>
+      </div>
+      <div class="product-grid" id="productGrid-jewelry">
+        <!-- Jewelry bestsellers render here via JS -->
+      </div>
     </div>
   </section>
 
@@ -419,17 +496,26 @@
     brandName: 'bellesogno',
     heroTagline: 'Cinematic pieces for people who notice detail.',
     navLink1: 'Shop',
-    navLink2: 'Clothes',
-    navLink3: 'Fragrance',
+    navLink2: 'Biancotela',
+    navLink3: 'Bellesogno',
     navLink4: 'About',
+    navLink5: 'Sovanze',
     bestsellersHeading: 'bestsellers',
     footerText: '© 2026 Bellesogno. All rights reserved.'
   };
 
   let PRODUCTS = [
-    { productID: 'P001', name: 'Test Jacket', category: 'Clothing', basePrice: 1000, images: null },
-    { productID: 'P002', name: 'Midnight Bloom', category: 'Perfume', basePrice: 1500, images: null }
+    { productID: 'P001', name: 'Test Jacket', category: 'Clothing', basePrice: 1000, images: null, featured: true },
+    { productID: 'P002', name: 'Midnight Bloom', category: 'Perfume', basePrice: 1500, images: null, featured: true }
   ];
+
+  // Home page shows up to 4 bestsellers per sub-brand, in this fixed order.
+  const CATEGORY_ROWS = [
+    { category: 'Perfume', gridId: 'productGrid-perfume' },
+    { category: 'Clothing', gridId: 'productGrid-clothing' },
+    { category: 'Jewelry', gridId: 'productGrid-jewelry' }
+  ];
+  const MAX_PER_ROW = 4;
 
   function applyConfig() {
     document.getElementById('brandName').textContent = EVENT_CONFIG.brandName;
@@ -438,6 +524,7 @@
     document.getElementById('navLink2').textContent = EVENT_CONFIG.navLink2;
     document.getElementById('navLink3').textContent = EVENT_CONFIG.navLink3;
     document.getElementById('navLink4').textContent = EVENT_CONFIG.navLink4;
+    document.getElementById('navLink5').textContent = EVENT_CONFIG.navLink5;
     document.getElementById('bestsellersHeading').textContent = EVENT_CONFIG.bestsellersHeading;
     document.getElementById('footerText').textContent = EVENT_CONFIG.footerText;
 
@@ -463,24 +550,42 @@
     return '৳' + Number(n).toLocaleString('en-IN');
   }
 
-  function renderProducts() {
-    const grid = document.getElementById('productGrid');
-    grid.innerHTML = PRODUCTS.map(p => {
-      const swatchClass = p.category === 'Perfume' ? 'product-swatch perfume' : 'product-swatch';
-      const media = p.images
-        ? `<img src="${p.images}" alt="${p.name}" onerror="this.style.display='none'" />`
-        : '';
-      return `
-        <div class="product-card reveal">
-          <div class="${swatchClass}">
-            <span class="product-category-tag">${p.category}</span>
-            ${media}
-          </div>
-          <div class="product-name">${p.name}</div>
-          <div class="product-price">${formatPrice(p.basePrice)}</div>
+  // Prefer products flagged `featured` in the Products sheet; if a category
+  // has none flagged yet, fall back to whatever's active in that category
+  // (so a row is never empty just because nobody set the flag yet).
+  function pickBestsellers(category, max) {
+    const inCategory = PRODUCTS.filter(p => p.category === category);
+    const featured = inCategory.filter(p => p.featured);
+    const chosen = featured.length > 0 ? featured : inCategory;
+    return chosen.slice(0, max);
+  }
+
+  function productCardHtml(p) {
+    const swatchClass = p.category === 'Perfume' ? 'product-swatch perfume' : 'product-swatch';
+    const media = p.images
+      ? `<img src="${p.images}" alt="${p.name}" onerror="this.style.display='none'" />`
+      : '';
+    return `
+      <div class="product-card">
+        <div class="${swatchClass}">
+          <span class="product-category-tag">${p.category}</span>
+          ${media}
         </div>
-      `;
-    }).join('');
+        <div class="product-name">${p.name}</div>
+        <div class="product-price">${formatPrice(p.basePrice)}</div>
+      </div>
+    `;
+  }
+
+  function renderProducts() {
+    CATEGORY_ROWS.forEach(row => {
+      const grid = document.getElementById(row.gridId);
+      if (!grid) return;
+      const items = pickBestsellers(row.category, MAX_PER_ROW);
+      grid.innerHTML = items.length > 0
+        ? items.map(productCardHtml).join('')
+        : `<div class="empty-category-note">New pieces dropping soon.</div>`;
+    });
     initScrollReveal();
   }
 
